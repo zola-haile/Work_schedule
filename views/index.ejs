@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/assets/style.css" type="text/css">
+</head>
+<body id="main-body">
+    <div id="pseudo-body">
+        <!-- Nav bar -->
+        <%- include('nav'); -%>
+
+        <div class="space"> </div>
+        
+        <div id="calender_container">
+            
+            <table id="calender_table">
+                <tr>
+                    <th>Shift Hours</th>
+                    <th><%= item[0].day %></th>
+                    <th><%= item[1].day %></th>
+                    <th><%= item[2].day %></th>
+                    <th><%= item[3].day %></th>
+                    <th><%= item[4].day %></th>
+                    <th><%= item[5].day %></th>
+                
+                </tr>
+                <% const shiftHours = item2;%>
+                <tr>
+                    <% for (let j=0; j<26; j++) {%>
+                        <td><%= shiftHours[j] %></td>
+                        <% for (let i=0;i<6;i++) {%>
+                            <td> 
+                                <form action="/" method="POST">
+                                    <% if(i<6){  %> 
+                                        <input type="text" name="shift1" class="first_input" placeholder="name" value="<%= item[i].shift[j][0] %>"> 
+                                        <input type="text" name="shift2" class="second_input" placeholder="name" value="<%= item[i].shift[j][1] %>">
+                                        
+                                        <input type="hidden" name="i" class="day_i" value="<%= i %>"> 
+                                        <input type="hidden" name="j" class="hour_j" value="<%= j %>"> 
+                            
+                                        <button class="pick_shift" type="submit"><img id="pick_shift"  src="/assets/pickshift.png" alt="sub"></button>
+                                    <%};%>
+
+                                </form> 
+                            </td>
+                        <% } %>
+                </tr>
+                <%}%>
+            </table>
+        </div>
+
+        <div class="space"> </div>
+        <script src="/assets/script.js"></script>
+    </div>    
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/assets/style.css" type="text/css">
+</head>
+<body id="main-body">
+
+    <div id="pseudo-body">
+        <!-- Nav bar -->
+        <%- include('nav'); -%>
+        <div class="space"> </div>
+
+        <div class="task_sec_nav">
+            <ul>
+                <li><button class="task_cat1">cat1</button></li>
+                <li><button class="task_cat2">cat2</button></li>
+            </ul>
+        </div>
+
+        <!-- <div class="space"> </div> -->
+
+        
+
+        <div id="tasks_box">            
+            <div id="cont_1" class="">
+                <div class="add_button_div">
+                    <button class="add_button">+Add</button>
+                </div>
+                <p>Content 1</p>
+            </div>
+
+            <div id="cont_2" class="hidden_task">
+                <div class="add_button_div">
+                    <button class="add_button">+Add</button>
+                </div>
+                <p>Content 2</p>
+            </div>
+
+        </div>
+
+        <div class="space"> </div>
+    </div> 
+
+    <script src="/assets/task_script.js"></script>
+</body>
+</html>

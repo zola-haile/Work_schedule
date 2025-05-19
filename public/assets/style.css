@@ -1,0 +1,77 @@
+#main-body{
+    background-color: rgba(0, 0, 0, 0.956);
+}
+
+#pseudo-body{
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.1);
+    color:whitesmoke;
+    overflow-y: scroll; /* Enables vertical scrolling */
+    overflow-x: scroll;
+     
+}
+
+#calender_container{
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-y: scroll; /* Enables vertical scrolling */
+    overflow-x: scroll;
+}
+
+
+table, th, td {
+    border: 1px solid rgb(234, 229, 244);
+    border-collapse: collapse ;
+}
+
+th,td{
+    width: 20em;
+}
+
+.space {
+    padding: 1.5%;
+}
+
+.first_input,.second_input{
+    width: 5em ;
+}
+#pick_shift{
+    width: 1em;
+    height: 1em;
+}
+
+.task_sec_nav{
+    width:  100%;
+    min-height: 50px;
+    background-color: beige;
+    color: black;
+}
+
+.task_sec_nav ul li{
+    list-style: none; 
+    display: inline-block;
+    text-align: center;
+    padding: 20px 20px;
+
+}
+
+.hidden_task{
+    display: none;
+}
+
+#tasks_box{
+    padding: 1rem 3rem;
+}
+
+.add_button{
+    background-color: aqua;
+    
+
+}
+.add_button_div{
+    text-align: right;
+    padding-right: 3rem;
+}
