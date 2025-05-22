@@ -15,8 +15,8 @@
 
         <div class="task_sec_nav">
             <ul>
-                <li><button class="task_cat1">cat1</button></li>
-                <li><button class="task_cat2">cat2</button></li>
+                <li><button class="task_cat1">Category 1</button></li>
+                <li><button class="task_cat2">Category 2</button></li>
             </ul>
         </div>
 
@@ -24,20 +24,89 @@
 
         
 
-        <div id="tasks_box">            
+        <div id="tasks_box">
+
+
+
             <div id="cont_1" class="">
-                <div class="add_button_div">
-                    <button class="add_button">+Add</button>
+                <div class="add_button_div" >
+                    <button id="task1_add_button" class="add_button" >+Add</button>
                 </div>
                 <p>Content 1</p>
             </div>
 
+            <div class="hidden_task" id="task_form_1"> 
+                <form action="" class="" >
+                    <label for="to_name">To:</label>
+                    <input type="text" name="to_name" id=""> <br>
+
+                    <label for="email">To email:</label>
+                    <input type="text" name="email" id=""><br>
+
+                    <label for="by_name">By:</label>
+                    <input type="text" name="by_name" id=""><br>
+
+                    <label for="by_email">By email:</label>
+                    <input type="text" name="by_email" id=""><br>
+
+                    <label for="post_date">Posted Date:</label>
+                    <input type="text" name="post_date" id=""><br>
+
+                    <label for="task_desc">Task Description:</label>
+                    <input type="text" name="task_desc" id=""><br>
+
+                    <label for="info_links">Links</label>
+                    <input type="text" name="info_links" id=""><br>
+
+                    <label for="due_by">Due Date:</label>
+                    <input type="text" name="due_by" id=""><br>
+
+                    <button type="submit">submit</button>
+                    <button type="submit">cancel</button>
+                </form>
+            </div>
+
+
             <div id="cont_2" class="hidden_task">
                 <div class="add_button_div">
-                    <button class="add_button">+Add</button>
+                    <button id="task2_add_button" class="add_button">+Add</button>
                 </div>
                 <p>Content 2</p>
             </div>
+
+
+            <div class="hidden_task" id="task_form_2"> 
+                <form action="" class="" >
+                    <label for="to_name2">To:</label>
+                    <input type="text" name="to_name2" id=""> <br>
+
+                    <label for="email2">To email:</label>
+                    <input type="text" name="email2" id=""><br>
+
+                    <label for="by_name2">By:</label>
+                    <input type="text" name="by_name2" id=""><br>
+
+                    <label for="by_email2">By email:</label>
+                    <input type="text" name="by_email2" id=""><br>
+
+                    <label for="post_date2">Posted Date:</label>
+                    <input type="text" name="post_date2" id=""><br>
+
+                    <label for="task_desc2">Task Description:</label>
+                    <input type="text" name="task_desc2" id=""><br>
+
+                    <label for="info_links2">Links</label>
+                    <input type="text" name="info_links2" id=""><br>
+
+                    <label for="due_by2">Due Date:</label>
+                    <input type="text" name="due_by2" id=""><br>
+
+                    <button type="submit">submit</button>
+                    <button type="submit">cancel</button>
+                </form>
+            </div>
+
+
 
         </div>
 

@@ -36,11 +36,14 @@ th,td{
 }
 
 .first_input,.second_input{
-    width: 5em ;
+    width: 5em;
+    border-radius: 5px;
+    align-items: center;
+
 }
 #pick_shift{
     width: 1em;
-    height: 1em;
+    height: 0.6em;
 }
 
 .task_sec_nav{
