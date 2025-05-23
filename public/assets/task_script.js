@@ -7,21 +7,16 @@ document.addEventListener("DOMContentLoaded",()=>{
         document.querySelector("#cont_2").classList.add('hidden_task')
         document.querySelector("#task_form_1").classList.add('hidden_task');
         document.querySelector("#task_form_2").classList.add('hidden_task');
-
-
     });
 
 
     const task2 = document.querySelector(".task_cat2");
-
     task2.addEventListener("click",(event)=>{
         event.preventDefault();
-
         document.querySelector("#cont_1").classList.add('hidden_task');
         document.querySelector("#cont_2").classList.remove('hidden_task');
         document.querySelector("#task_form_1").classList.add('hidden_task');
         document.querySelector("#task_form_2").classList.add('hidden_task');
-
     })
 
 
@@ -46,8 +41,6 @@ document.addEventListener("DOMContentLoaded",()=>{
         document.querySelector("#cont_1").classList.add('hidden_task');
         document.querySelector("#task_form_1").classList.add('hidden_task');
         document.querySelector("#task_form_2").classList.remove('hidden_task');
-
-
     });
 
 

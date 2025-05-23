@@ -19,9 +19,22 @@ const hours=new mongoose.Schema({
     hours:[String]
 });
 
+const task1 = new mongoose.Schema({
+  To:String,
+  to_email:String,
+  From:String,
+  from_email:String,
+  posted_date: Date,
+  task_desc:String,
+  links:[String],
+  due_by:Date
+});
+
 // Create a model
 const dayshifts = mongoose.model('shifts', shifts, 'dayshifts'); // Explicitly specify the collection name
 const shift_hours =mongoose.model('shift_hours', hours, 'Hours');
+
+const task1_model= mongoose.model('task1_model',task1,'task1');
 
 // Example function to fetch all documents
 const fetchDayShifts = async () => {
@@ -87,6 +100,59 @@ const edit_dayshifts = async (date_i, hour_j, first_name, second_name) => {
 //edit_dayshifts(0, 0, "Sam Meta", "Leka");
 
 
+const fetchtask1 = async ()=>{
+  try {
+    let task_list = await task1_model.find({});
+    return task_list;
+  } catch (err) {
+    console.error("Error fetching day shifts:", err.message);
+  } 
+};
+
+// let d=fetchtask1();
+// d.then((dt)=>{
+//   console.log(dt);
+// });
+
+const addable_task={
+  To: 'Mimi',
+  to_email: 'zhaile@nd.edu',
+  From: 'Do You Love me',
+  from_email: 'zelalemaddisu94@gmail.com',
+  posted_date: new Date('2025-05-22T00:38:08.272Z'),
+  task_desc: 'Do that and this and then this',
+  links: [ 'https://', 'https://' ],
+  due_by: new Date('2025-12-31T10:00:00.000Z')
+}
+
+//console.log(addable_task);
+
+const add_task1 = async (addable)=>{
+  let is_inserted = await task1_model.create(addable);
+  return is_inserted;
+};
+
+// let d = add_task1(addable_task);
+// d.then((dt)=>{
+//   console.log(dt);
+// }); 
+
+
+const delete_task1 = async (id)=>{
+  await task1_model.deleteOne(id);
+};
+
+// const i_d= {_id:'682fc2f471787114c42e07d4'}
+
+// let d=delete_task1(i_d);
+
+// d.then((d)=>{
+//   console.log(d);
+// });
+
+
+
+
 
 // const dt= fetchDayShifts();
 // dt.then((just)=>{
@@ -102,4 +168,4 @@ const edit_dayshifts = async (date_i, hour_j, first_name, second_name) => {
 
 
 // Export the model (optional, if needed in other files)
-module.exports = {fetchDayShifts,fetchHours,edit_dayshifts};
+module.exports = {fetchDayShifts,fetchHours,edit_dayshifts,fetchtask1};

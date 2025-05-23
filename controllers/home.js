@@ -41,13 +41,22 @@ module.exports=(app)=>{
         res.json({ message: "Shift successfully submitted!" });
     });
 
-    app.get('/tasks',(req,res)=>{
-        res.render('tasks');
+
+
+
+    app.get('/tasks',async (req,res)=>{
+        
+       try{
+            let task_1_list = await (shifts.fetchtask1());
+            task_1_list.forEach((t)=>{
+                console.log(t['_id']);
+
+            });
+            res.render('tasks');
+        }
+        catch{
+
+        }
     });
 
-
-
-
-
-    
-};
+}
