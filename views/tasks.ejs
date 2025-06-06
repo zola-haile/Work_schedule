@@ -32,6 +32,49 @@
                 <div class="add_button_div" >
                     <button id="task1_add_button" class="add_button" >+Add</button>
                 </div>
+
+                <% i=1 %>
+                <% task.forEach(t => { %>
+
+                    <div class="card mb-3" style="width: 18rem; background-color: black;">
+                        <div class="card-body">
+                          <h5 class="card-title">Task <%=i%></h5>
+                          <p class="card-text"><%=t.task_desc%></p>
+                          <p>Assigned to: <%=t.To%></p>
+                          <p>Assigned by: <%=t.From%></p>
+
+                          <% let datee= new Date(t.due_by); %>
+                          <p>Due by: <%= datee.toLocaleDateString("en-US")%></p>
+
+
+                          <%t.links.forEach( l =>{%>
+                            <a href="l" class="btn btn-primary">Link</a>
+                          <%});%>
+                            <br>
+                          <button>Done</button>
+                          
+                        </div>
+                      </div>
+                    <div>
+
+                    <!--    
+                        <ul>
+                            <li>Assigned to: <%=t.To%></li>
+                            <li>Assigned email: <%=t.to_email%></li>
+                            <li>Assigned by: <%=t.From%></li>
+                            <li>Assinee email: <%=t.from_email%></li>
+                            <li>Posted: <%=t.posted_date%></li>
+                            <li>Task Description<%=t.task_desc%></li>
+                            <li>Links to task: <%=t.links%></li>
+                            <li>Due by: <%=t.due_by%></li>
+
+                        </ul> -->
+                    </div>
+
+                    <% i++ %>
+                <% }); %>
+
+
                 <p>Content 1</p>
             </div>
 
