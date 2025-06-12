@@ -44,6 +44,15 @@ document.addEventListener("DOMContentLoaded",()=>{
     });
 
 
+    // const sub_task1 = document.querySelector("#sub_task1");
+
+    // sub_task1.addEventListener("click",(event)=>{
+    //     event.preventDefault();
+
+    //     console.log("Hola mamasita!");
+    // });
+
+
 
 
 

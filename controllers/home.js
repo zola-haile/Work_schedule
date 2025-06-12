@@ -48,9 +48,9 @@ module.exports=(app)=>{
         
        try{
             let task_1_list = await (shifts.fetchtask1());
-            task_1_list.forEach((t)=>{
-                console.log(t);
-            });
+            // task_1_list.forEach((t)=>{
+            //     console.log(t);
+            // });
             res.render('tasks',{task:task_1_list});
         }
         catch{

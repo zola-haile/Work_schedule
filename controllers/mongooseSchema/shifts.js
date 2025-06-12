@@ -165,7 +165,5 @@ const delete_task1 = async (id)=>{
 
 // });
 
-
-
 // Export the model (optional, if needed in other files)
 module.exports = {fetchDayShifts,fetchHours,edit_dayshifts,fetchtask1};
