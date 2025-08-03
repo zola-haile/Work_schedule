@@ -1,5 +1,6 @@
 //brew services restart mongodb-community
 const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 
 const uri = "mongodb://localhost:27017/career"; 
 
@@ -27,7 +28,8 @@ const task1 = new mongoose.Schema({
   posted_date: Date,
   task_desc:String,
   links:[String],
-  due_by:Date
+  due_by:Date,
+  show:Boolean
 });
 
 // Create a model
@@ -122,7 +124,8 @@ const addable_task={
   posted_date: new Date('2025-05-22T00:38:08.272Z'),
   task_desc: 'Do that and this and then this',
   links: [ 'https://', 'https://' ],
-  due_by: new Date('2025-12-31T10:00:00.000Z')
+  due_by: new Date('2025-12-31T10:00:00.000Z'),
+  show: true
 }
 
 //console.log(addable_task);
@@ -138,18 +141,19 @@ const add_task1 = async (addable)=>{
 // }); 
 
 
-const delete_task1 = async (id)=>{
-  await task1_model.deleteOne(id);
+
+const done_button_task1 = async (id) => {
+  return await task1_model.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { show: false } }
+  );
 };
 
-// const i_d= {_id:'682fc2f471787114c42e07d4'}
+// const id = '688a324990d19fd8efdc3b04';
 
-// let d=delete_task1(i_d);
-
-// d.then((d)=>{
-//   console.log(d);
+// done_button_task1(id).then((res) => {
+//   console.log(res); // { acknowledged: true, modifiedCount: 1, ... }
 // });
-
 
 
 
@@ -166,4 +170,4 @@ const delete_task1 = async (id)=>{
 // });
 
 // Export the model (optional, if needed in other files)
-module.exports = {fetchDayShifts,fetchHours,edit_dayshifts,fetchtask1};
+module.exports = {fetchDayShifts,fetchHours,edit_dayshifts,fetchtask1,add_task1,done_button_task1};
