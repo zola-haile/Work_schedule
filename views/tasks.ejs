@@ -35,34 +35,42 @@
                     <% i=1 %>
                     <% task.forEach(t => { %>
                         <%if (t.show){ %>
-                        <div class="task_card">
-                            <h5>Task <%=i%></h5>
-                            
-                            <Details>
-                                <summary>Click to see task details</summary>
-                                <div class="task_card_spacing">
-                                    <div><%=t.task_desc%></div>
-                                </div>
+                            <% let assigned_date = new Date(t.posted_date);  %>
+                            <% let due_date= new Date(t.due_by); %>
+                            <% let date_difference = due_date - assigned_date; %>
+                            <% let difference_in_days = date_difference / (1000 * 60 * 60 *  24); %>
 
-                            </Details>
-                            <div class="task_card_spacing"> <strong>Assigned to:</strong> <%=t.To%> </div>
-                            <div class="task_card_spacing"> <strong>Assigned by: </strong><%=t.From%></div>
+                            <div class="task_card" date_diff=" <%= difference_in_days %> ">
+                                <h5>Task <%=i%></h5>
+                                
+                                <Details>
+                                    <summary>Click to see task details</summary>
+                                    <div class="task_card_spacing">
+                                        <div><%=t.task_desc%></div>
+                                    </div>
 
-                            <% let datee= new Date(t.due_by); %>
-                            <p><strong>Due by: </strong><%= datee.toLocaleDateString("en-US")%></p>
-                            <%link_counter = 1 %>
-                            <%t.links.forEach( l =>{%>
-                                <a href=<%=l%> target="_blank" class="btn btn-primary">Link <%=link_counter%></a>
-                                <%link_counter += 1 %>
-                            
-                            <%});%>
-                                <br>
-                                <br>
+                                </Details>
+                                <div class="task_card_spacing"> <strong>Assigned to:</strong> <%=t.To%> </div>
+                                <div class="task_card_spacing"> <strong>Assigned by: </strong><%=t.From%></div>
 
-                            <button type="button" class="task_finished_button" data_id= "<%= t.id %>" >Done</button>
-                        </div>
+                                
+                                <p><strong>Due by: </strong><%= due_date.toLocaleDateString("en-US")%></p>
 
-                        <br>
+                                
+
+                                <%link_counter = 1 %>
+                                <%t.links.forEach( l =>{%>
+                                    <a href=<%=l%> target="_blank" class="btn btn-primary">Link <%=link_counter%></a>
+                                    <%link_counter += 1 %>
+                                
+                                <%});%>
+                                    <br>
+                                    <br>
+
+                                <button type="button" class="task_finished_button" data_id= "<%= t.id %>" >Done</button>
+                            </div>
+
+                            <br>
                         <% i++ %>
                         <%}%>
                     <% }); %>
@@ -70,39 +78,42 @@
                 </div>
             </div>
 
-            <div class="hidden_task" id="task_form_1"> 
-                <form action="/task1" method="POST" class="" id="task1_form">
-                    <label for="to_name">Assigned To (Name): </label>
-                    <input type="text" name="to_name" class="task1_to_name"> <br>
 
-                    <label for="email">Assigned To (Email): </label>
-                    <input type="email" name="email" id="" class="task1_to_email"><br>
+            <div class="center_item">
+                <div class="hidden_task" id="task_form_1"> 
+                    <form action="/task1" method="POST" class="" id="task1_form">
+                        <label for="to_name">Assigned To (Name): </label>
+                        <input type="text" name="to_name" class="task1_to_name"> <br>
 
-                    <label for="by_name">Assigned By (Name): </label>
-                    <input type="text" name="by_name" id="" class="task1_by_name"><br>
+                        <label for="email">Assigned To (Email): </label>
+                        <input type="email" name="email" id="" class="task1_to_email"><br>
 
-                    <label for="by_email">Assigned By (Email): </label>
-                    <input type="email" name="by_email" id="" class="task1_by_email"><br>
+                        <label for="by_name">Assigned By (Name): </label>
+                        <input type="text" name="by_name" id="" class="task1_by_name"><br>
 
-                    <label for="task_desc">Task Details: </label>
-                    <input type="text" name="task_desc" id="" class="task1_desc"><br>
+                        <label for="by_email">Assigned By (Email): </label>
+                        <input type="email" name="by_email" id="" class="task1_by_email"><br>
 
-                    <label for="post_date">Date Assigned: </label>
-                    <input type="date" name="post_date" id="" class="task1_post_date"><br>
+                        <label for="task_desc">Task Details: </label>
+                        <input type="text" name="task_desc" id="" class="task1_desc"><br>
 
-                    <label for="due_by">Task Due Date: </label>
-                    <input type="date" name="due_by" id="" class="task1_due"><br>
+                        <label for="post_date">Date Assigned: </label>
+                        <input type="date" name="post_date" id="" class="task1_post_date"><br>
 
-                    
-                    <div id="links_container">
-                        <label for="info_links[]">Related Links: </label>
-                        <input type="links" name="info_links[]" placeholder="https://example.com" class="task1_links"> 
-                        <button type="button" id="add_another_link" >Add another link</button><br>
-                    </div>
+                        <label for="due_by">Task Due Date: </label>
+                        <input type="date" name="due_by" id="" class="task1_due"><br>
 
-                    <button type="submit" id="sub_task1">Submit</button>
-                    <!-- <button type="submit" id="cancel_adding_task1">cancel</button> -->
-                </form>
+                        
+                        <div id="links_container">
+                            <label for="info_links[]">Related Links: </label>
+                            <input type="links" name="info_links[]" placeholder="https://example.com" class="task1_links"> 
+                            <button type="button" id="add_another_link" >Add another link</button><br>
+                        </div>
+
+                        <button type="submit" id="sub_task1">Submit</button>
+                        <!-- <button type="submit" id="cancel_adding_task1">cancel</button> -->
+                    </form>
+                </div>
             </div>
 
 

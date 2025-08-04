@@ -75,10 +75,21 @@ th,td{
 .task_card{
     padding: 1em;
     border-radius: 1em;
-    background-color: blueviolet;
+    /* background-color: blueviolet; */
     margin: 2em;
 
 }
+
+.red_task_card{
+    background-color: red;
+}
+.yellow_task_card{
+    background-color: rgb(205, 171, 50);
+}
+.green_task_card{
+    background-color: green;
+}
+
 
 .task_card_spacing{
     line-height: 1.5em;
@@ -103,18 +114,21 @@ th,td{
 }
 
 
-#task_form_1{
-    /* display: flex;
-    flex-direction: row;
-    width: 300px;
-    margin: auto;
-    padding: 2em; */
-    background-color: rgb(42, 151, 165);
-    padding: 1em;
-    text-align: center;
-    margin: auto;
 
+.center_item{
+    display: flex;
+    justify-content: center; /* horizontal alignment */
+    /* background-color: bisque; */
 }
+
+#task_form_1{
+    background-color: rgb(3, 73, 82);
+    padding: 1em;
+    width: 500px;
+    border-radius: 2em;
+}
+
+
 
 
 

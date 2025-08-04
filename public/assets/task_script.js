@@ -169,4 +169,30 @@ document.addEventListener("DOMContentLoaded",()=>{
         });
 
     });
+
+
+    const task_cards = document.querySelectorAll(".task_card");
+
+    task_cards.forEach(card =>{
+        let duration = card.getAttribute('date_diff');
+        console.log(duration);
+        if (duration >= 15){
+            card.classList.add("green_task_card");
+            card.classList.remove("red_task_card");
+            card.classList.remove("yellow_task_card");
+
+        }else if(duration < 15 && duration >= 5){
+            card.classList.add("yellow_task_card");
+            card.classList.remove("green_task_card");
+            card.classList.remove("red_task_card");
+        }else {
+            card.classList.add("red_task_card");
+            card.classList.remove("green_task_card");
+            card.classList.remove("yellow_task_card");
+        }
+    })
+
+
+
+
 });
