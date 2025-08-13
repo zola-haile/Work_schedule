@@ -35,9 +35,9 @@
                     <% i=1 %>
                     <% task.forEach(t => { %>
                         <%if (t.show){ %>
-                            <% let assigned_date = new Date(t.posted_date);  %>
+                            <% let todays_date = new Date();  %>
                             <% let due_date= new Date(t.due_by); %>
-                            <% let date_difference = due_date - assigned_date; %>
+                            <% let date_difference = due_date - todays_date; %>
                             <% let difference_in_days = date_difference / (1000 * 60 * 60 *  24); %>
 
                             <div class="task_card" date_diff=" <%= difference_in_days %> ">

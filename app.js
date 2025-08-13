@@ -1,11 +1,14 @@
 const express = require('express');
 const controllers = require('./controllers/home');
+const session = require('express-session');
+const bodyParser = require('body-parser');
 //const { join } = require('path');
 
 //declaring express
 const app = express();
 
 app.use(express.urlencoded({ extended: true })); // Parses form data
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // Parses JSON data
 
 //connects to index.ejs etc; EJS for rendering HTML templates

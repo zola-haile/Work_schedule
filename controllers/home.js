@@ -3,7 +3,7 @@ const shifts = require('./mongooseSchema/shifts.js');
 
 
 
-module.exports=(app)=>{
+module.exports = (app)=>{
     //displays the given page from the get go
     //currently, / is home page route
     app.get('/',async(req,res)=>{
@@ -82,8 +82,6 @@ module.exports=(app)=>{
         task_id = req;
         // console.log(task_id.body.id);
         // console.log(task_id.id);
-
-
         shifts.done_button_task1(task_id.body.id);
         res.json();
     })

@@ -1,6 +1,15 @@
 //brew services restart mongodb-community
+
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
+const bcrypt = require('bcrypt');
+
+//notes on bcrypt:
+
+// Hashing
+// const hashed = await bcrypt.hash("mypassword", 10);
+// Comparing
+// const match = await bcrypt.compare("mypassword", hashed);
 
 const uri = "mongodb://localhost:27017/career"; 
 
@@ -32,11 +41,29 @@ const task1 = new mongoose.Schema({
   show:Boolean
 });
 
+
+const user = new mongoose.Schema({
+  first_name: String,
+  last_name: String,
+  email: String,
+  netid: String,
+  role: String,
+  password: String
+})
+
+user.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
 // Create a model
 const dayshifts = mongoose.model('shifts', shifts, 'dayshifts'); // Explicitly specify the collection name
 const shift_hours =mongoose.model('shift_hours', hours, 'Hours');
 
 const task1_model= mongoose.model('task1_model',task1,'task1');
+
+const user_model = mongoose.model('user_model',user,'users');
 
 // Example function to fetch all documents
 const fetchDayShifts = async () => {
@@ -168,6 +195,123 @@ const done_button_task1 = async (id) => {
 //     })
 
 // });
+
+
+
+const get_all_users = async ()=>{
+  try{
+    let all_users = await user_model.find({});
+    console.log(all_users);
+  }catch (err){
+    console.log(err)
+  }
+}
+
+// get_all_users().then()
+
+
+const find_user = async (email) => {
+  try{
+    let one_user = await user_model.findOne({email:email});
+    return one_user;
+    // console.log(one_user);
+  }catch (err){
+    console.log(err);
+  }
+}
+
+// find_user("azeleke@nd.edu")
+// .then((exists)=>{
+//   console.log(exists);
+// }).catch((err)=>{
+//   console.log(err)
+// });
+
+
+let user0_info = {
+  first_name: "Zelalem",
+  last_name: "Haile",
+  email: "zhaile@nd.edu",
+  netid: "zhaile",
+  role: "sub_admin",
+  password: "dontsuckem"
+}
+
+let user_info = {
+  first_name: "Abebe",
+  last_name: "Zeleke",
+  email: "azeleke@nd.edu",
+  netid: "azeleke",
+  role: "admin",
+  password: "dontsuckem"
+}
+
+let user2_info = {
+  first_name: "Abebe",
+  last_name: "Zeleke",
+  email: "eke@nd.edu",
+  netid: "azeleke",
+  role: "ca",
+  password: "dontsuckem"
+}
+
+//adding a user
+const add_user = async (user_info)=>{
+  //check if user exists, add is not there already
+  let user = await find_user(user_info.email);
+
+  if (!user){
+    let added_user = await user_model.create(user_info);
+    if (added_user) console.log("added successfully");
+  }else{
+    console.log("The email is already taken");
+  }
+  
+}
+
+// add_user(user_info);
+
+//change role
+
+const change_role = async (email,new_role) => {
+  let changed = await user_model.updateOne(
+    {email:email},
+    {$set: {role:new_role}});
+
+  if (changed){
+    console.log("Changed role successfully")
+  }else{
+    console.log("Failed to change role")
+  }
+  
+
+}
+
+// change_role("eke@nd.edu","ca");
+
+//authenticate career assistant
+const auth_user = async (email,password) =>{
+  const user = await find_user(email);
+
+  if (!user){
+    console.log("You are not authorized");
+    return false;
+  }
+
+  const pass_matches = await bcrypt.compare(password,user.password);
+  if (pass_matches){
+    console.log("Authenticated");
+    return true;
+  }else{
+    console.log("Wrong password!");
+    return false;
+  }
+}
+
+// auth_user("eke@nd.edu","dontsuckem");
+
+
+
 
 // Export the model (optional, if needed in other files)
 module.exports = {fetchDayShifts,fetchHours,edit_dayshifts,fetchtask1,add_task1,done_button_task1};
