@@ -182,6 +182,35 @@ const done_button_task1 = async (id) => {
 //   console.log(res); // { acknowledged: true, modifiedCount: 1, ... }
 // });
 
+// new_object = {
+//   _id: '688fc075f7cdc6bd92725324',
+//   To: 'Zeleke',
+//   to_email: 'yetemeta@nd.edu',
+//   From: 'Lekeke',
+//   from_email: 'leka@me.edu',
+//   posted_date: '2025-08-03',
+//   task_desc: 'This is the third task to see how the mother links work!',
+//   links: [
+//     'https://www.geeksforgeeks.org/mongodb/mongoose-updateone-function/',
+//     'https://www.figma.com/design/z3jqdwVAb6vNu9S6Nhh86I/career?node-id=1-12'
+//   ],
+//   due_by: '2025-08-06',
+//   show: true
+// }
+
+
+const edit_task = async (new_object) => {
+  new_object.due_by = new Date(new_object.due_by);
+  new_object.posted_date = new Date(new_object.posted_date);
+
+  return await task1_model.updateOne(
+    {_id:new ObjectId(new_object._id)},
+    {$set:{To:new_object.To, to_email:new_object.to_email, From:new_object.From, from_email:new_object.from_email, posted_date:new_object.posted_date, task_desc: new_object.task_desc, links: new_object.links, due_by: new_object.due_by}}
+  )
+}
+
+// edit_task(new_object).then();
+
 
 
 
@@ -201,7 +230,8 @@ const done_button_task1 = async (id) => {
 const get_all_users = async ()=>{
   try{
     let all_users = await user_model.find({});
-    console.log(all_users);
+    // console.log(all_users);
+    return all_users;
   }catch (err){
     console.log(err)
   }
@@ -219,6 +249,8 @@ const find_user = async (email) => {
     console.log(err);
   }
 }
+
+
 
 // find_user("azeleke@nd.edu")
 // .then((exists)=>{
@@ -273,10 +305,10 @@ const add_user = async (user_info)=>{
 
 //change role
 
-const change_role = async (email,new_role) => {
+const change_role = async (user) => {
   let changed = await user_model.updateOne(
-    {email:email},
-    {$set: {role:new_role}});
+    {_id:new ObjectId(user._id)},
+    {$set: {role:user.role,first_name:user.first_name,last_name:user.last_name,email:user.email,netid:user.netid}});
 
   if (changed){
     console.log("Changed role successfully")
@@ -287,7 +319,16 @@ const change_role = async (email,new_role) => {
 
 }
 
-// change_role("eke@nd.edu","ca");
+const changing={
+  first_name: 'Zelalem',
+  last_name: 'Haile',
+  email: 'zhaile@nd.edu',
+  netid: 'zhaile',
+  role: 'admin',
+  _id: '689cc08b3b979dc6ad2f2997'
+}
+
+// change_role(changing);
 
 //authenticate career assistant
 const auth_user = async (email,password) =>{
@@ -311,7 +352,18 @@ const auth_user = async (email,password) =>{
 // auth_user("eke@nd.edu","dontsuckem");
 
 
-
-
 // Export the model (optional, if needed in other files)
-module.exports = {fetchDayShifts,fetchHours,edit_dayshifts,fetchtask1,add_task1,done_button_task1};
+module.exports = {
+  fetchDayShifts,
+  fetchHours,
+  edit_dayshifts,
+  fetchtask1,
+  add_task1,
+  done_button_task1,
+  edit_task,
+  auth_user,
+  find_user,
+  add_user,
+  get_all_users,
+  change_role
+};

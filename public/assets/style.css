@@ -142,3 +142,9 @@ th,td{
     text-align: right;
     padding-right: 3rem;
 }
+
+#user_body_container{
+    text-align: center;
+    width: 100%;
+    /* background-color: aquamarine; */
+}

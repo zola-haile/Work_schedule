@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("Here");
+
     const forms = document.querySelectorAll("#calender_table form");
 
     forms.forEach(form => {

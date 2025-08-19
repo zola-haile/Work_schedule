@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/assets/style.css" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+
+</head>
+<body id="main-body">
+    <div id="pseudo-body">
+        <%- include('nav'); -%>
+
+        <div id="individual_user_container">
+            <h1>User name: <%= user.first_name + " " + user.last_name %></h1>
+            <h1>User email: <%= user.email %></h1>
+            <h1>User netid: <%= user.netid %></h1>
+            <h1>User email: <%= user.email %></h1>
+            <h1>User role: <%= user.role %></h1>
+
+            
+            
+            <button type="button" id="edit_user_buttom" >Edit user information</button>
+        </div>
+
+        <div id="edit_user_info" class="hidden_task">
+            <form id="edit_user_table" action="/user/update" method="POST">
+
+                <input type="hidden" id="user_id" name="user_id" value="<%= user.id %>">
+
+                <label for="first_name">User Frist Name</label>
+                <input type="text" id="first_name" name="first_name" value="<%=user.first_name%>">
+
+                <br>
+
+                <label for="last_name">User Last Name</label>
+                <input type="text" id="last_name" name="last_name" value="<%=user.last_name%>">
+
+                <br>
+
+                <label for="email">User email</label>
+                <input type="text" id="email" name="email" value="<%=user.email%>">
+
+                <br>
+
+                <label for="netid">User netid</label>
+                <input type="text" id="netid" name="netid" value="<%=user.netid%>">
+
+                <br>
+
+                <label for="role">User Role</label>
+                    <%
+                        let user_role = "";
+                        if (user.role === "ca") {
+                            user_role = "Career Assistant";
+                        } else if (user.role === "admin") {
+                            user_role = "Administer";
+                        } else if (user.role === "sub_admin") {
+                            user_role = "Career Advisor";
+                        }
+                    %>
+
+
+                <select name="role" id="role" value="<%=user_role%>">
+                    <option value="ca">Career Assistant</option>
+                    <option value="sub_admin">Career Advisor</option>
+                    <option value="admin">Administer</option>
+                </select>
+
+
+
+                <br>
+
+                <button type="submit" id="update_user_info">Update user information</button>
+                <button type="button" id="cancel_edit">Cancel</button>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/user_info_script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+</body>
+</html>
