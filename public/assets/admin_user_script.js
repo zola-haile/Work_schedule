@@ -85,8 +85,60 @@ document.addEventListener('DOMContentLoaded',()=>{
             window.location.href = `/user/${user_email}`;
         }); 
 
+    const search_input= document.querySelector("#search_user");
+    const result_box = document.querySelector("#search_results");
 
 
+    const search_users= async (query)=>{
+        try{
+            const res = await fetch(`/users/search?q=${encodeURIComponent(query)}`);
+            const users = await res.json();
 
+            result_box.innerHTML = "";
 
+            users.forEach(user => {
+                const li = document.createElement("li");
+
+                li.classList.add("list-group-item", "list-group-item-action");
+                li.textContent = `${user.first_name} ${user.last_name}`;
+
+                li.addEventListener("click", ()=>{
+                    search_input.value = user.first_name;
+
+                    result_box.innerHTML = "";
+                    // redirect to that user's page
+                    // console.log(user);
+                    window.location.href = `/user/${user.email}`;
+                    
+                })
+                result_box.appendChild(li);
+
+            });
+        }catch(error){
+            console.error("❌ Error fetching users:", error);
+        }
+    }
+
+    function debounce(fn, delay) {
+        let timer; // stores timeout reference
+        
+        return (...args) => {
+            clearTimeout(timer); // cancel any existing timer
+            timer = setTimeout(() => fn(...args), delay); 
+            // start a new timer that calls fn after `delay`
+        };
+    }
+
+    search_input.addEventListener("input",debounce(()=>{
+        const query = search_input.value.trim();
+        if (query.length > 0) {
+            search_users(query);
+            document.querySelector("#search_results").classList.remove("hidden_task");
+            document.querySelector("#users_info_table").classList.add("hidden_task");
+        } else {
+            result_box.innerHTML = "";
+            document.querySelector("#search_results").classList.add("hidden_task");
+            document.querySelector("#users_info_table").classList.remove("hidden_task");
+        }
+    },300));
 })

@@ -14,7 +14,7 @@
         <%- include('nav'); -%>
 
 
-        <div id="user_body_container" class="">
+        <div id="user_body_container" class="centered_item">
             
             <div class="" id="user_details">
                 <p>User Name: <%=req.session.user.first_name + " " + req.session.user.last_name%></p>
@@ -75,7 +75,14 @@
 
             <div id="users_display_container" class="hidden_task">
                 <button type="button" id="back_to_user_profile">Go back to your profile</button>
-                <table class="table table-striped ">
+                <div class="position-relative">
+                    <input id="search_user" type="text" class="form-control" placeholder="Search by name">
+                    <ul id="search_results" class="list-group position-absolute w-100" class="hidden_task"></ul>
+
+                </div>
+                
+
+                <table class="table table-striped " id="users_info_table">
                     <tr>
                         <th>User Name</th> <th>User email</th> <th>User role</th>
                     </tr>

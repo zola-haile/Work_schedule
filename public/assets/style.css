@@ -143,8 +143,148 @@ th,td{
     padding-right: 3rem;
 }
 
-#user_body_container{
+.centered_item{
     text-align: center;
     width: 100%;
     /* background-color: aquamarine; */
 }
+
+#daily_shift_container{
+    min-height: 100vh;
+    height: auto;
+}
+
+
+#daily_calender_container{
+  display: grid;
+  grid-template-columns: auto 1fr;   /* left fixed, right flexible */
+  column-gap: 1em;                    /* the space */
+  position: relative;
+}
+
+/* Make the columns opaque so the red gap is visible */
+#daily_calender_container  div:not(#current_time_line){
+  
+  border-radius: 6px;
+  border: 2px solid rgb(60, 66, 69);
+}
+
+#daily_calender_container > div:not(#current_time_line) {
+  display: grid;
+  grid-template-rows: repeat(24, 1fr); /* 24 rows for 24 hours */
+}
+
+.employee_edition{
+    
+    /* align-items: center;
+    text-align: center; */
+    background-color: rgb(63, 42, 42);
+    margin: 1em 5em;
+    border-radius: 10px;
+    padding-bottom: 2em;
+
+}
+
+.edit_employee_shift{
+    border-radius: 5px;
+    background-color: #898484;
+}
+
+.shift_employee_container{
+    border-radius: 5px;
+    border: #898484 solid 2px;
+    padding: 1em;
+    margin-right:5px;
+    background-color: rgb(37, 74, 61);
+}
+
+.return_to_shift_button{
+    background-color: #d6dede;
+}
+
+.return_to_shift_button_container{
+
+    display: flex;        /* make it a flex container */
+    justify-content: flex-end; /* align items to the left */
+    width: 100%;
+    padding-right: 5em ;
+    padding-bottom: 2.5em ;
+}
+
+.daily_users_with_shifts_header{
+    
+}
+
+.daily_current_shift_employees{
+    background-color: #898484;
+    padding: 2rem;
+    margin: 3rem;
+    border-radius: 1rem;
+}
+
+
+#current_time_line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #8f2a2a;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+input::placeholder{
+    text-align: center;
+}
+
+#current_shift_employees > span{
+    display: inline-block;
+    background-color: #798037;
+    padding: 0.5em;
+    border-radius: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+/* Tooltip style */
+#current_time_line::after {
+  content: attr(data-time); /* display current time from a data attribute */
+  position: absolute;
+  top: -25px;  /* move above the line */
+  left: 10px;
+  background: #222;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none; /* tooltip itself doesn’t block hover */
+}
+
+#current_time_line:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+#weekly_calendar_container {
+  display: grid;
+  grid-template-columns: 120px repeat(7, 1fr);
+  border: 1px solid #ccc;
+  margin: 5px;
+}
+
+#weekly_calendar_container > div {
+  /* border: 1px solid #eee;
+  padding: 8px; */
+  border-radius: 6px;
+  border: 2px solid rgb(60, 66, 69);
+  margin: 2px;
+}
+
+
+
+

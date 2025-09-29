@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/assets/style.css" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+
+</head>
+<body id="main-body">
+    <div id="pseudo-body">
+        <!-- Nav bar -->
+        <%- include('nav'); -%>
+
+        <div class="space"> </div>
+
+        <div class="list-group list-group-horizontal ">
+            <button id="daily_button" type="button" class="list-group-item text-bg-secondary">Daily</button>
+            <button id="weekly_button" type="button" class="list-group-item">Weekly</button>
+            <button id="monthly_button" type="button" class="list-group-item">Monthly</button>
+        </div>
+
+        <div id="daily_shift_container" class="text-bg-secondary">
+
+            <div class="space"> </div>
+
+            <div class="list-group list-group-horizontal">
+                <button id="yesterday_button" type="button" class="list-group-item" cur_date="<%=selected_date.toISOString()%>"  >prev</button>
+                <input type="date" id="today_date_input" name="today_date_input" class="list-group-item text-bg-secondary"  value="<%= selected_date.toISOString().split('T')[0] %>">
+                <!-- <button id="today_button" type="button" class="list-group-item text-bg-secondary"></button> -->
+                <button id="tomorrow_button" type="button" class="list-group-item" cur_date="<%=selected_date.toISOString()%>" >next</button>
+            </div>
+
+
+
+            <div class="space"> </div>
+
+
+
+            <div class="hidden_task employee_edition " id="daily_employee_edition">
+                <div class="return_to_shift_button_container">
+                    <button class="return_to_shift_button" id="daily_return_to_shift_button">Return to Daily Shifts</button>
+                </div>
+    
+                <div class="daily_current_shift_employees">
+                    <!-- <div class="space"> </div> -->
+                    <h3 id="daily_users_with_shifts_header" class=" daily_users_with_shifts_header">
+
+                    </h3>
+
+                    <div id="daily_current_shift_employees" >
+                        
+                            <!-- <ol>
+                                <li>
+                                    <span></span>
+                                    <span><button></button></span>
+                                </li>
+                            </ol> -->
+                    </div>
+                    <div class="space"> </div>
+
+                <!-- <label for="add_shift">Add employee </label> -->
+                <input style="width:50%" type="text" placeholder="Search employee by name to add" id="daily_add_shift" name="add_shift">
+                <span><ul id="daily_search_results" class="list-group" class=""></ul></span>
+                </div>
+
+                
+            </div>
+
+
+
+
+            <%const hours = ["12am","1am","2am","3am","4am","5am","6am","7am","8am","9am","10am","11am", "12pm","1pm","2pm","3pm","4pm","5pm","6pm","7pm","8pm","9pm","10pm","11pm"]; %>
+
+            <%if (req.session.user.role==="admin"){%>
+
+                
+
+                <div id="daily_calender_container">
+                    <div>
+                        <%hours.forEach((h)=>{%>
+                            <div class="p-3"><%=h%></div>
+                        <%})%>
+                    </div>
+
+                    <div>
+                        <%if(!shift){%>
+                            <%hours.forEach((h)=>{%>
+                                <div class="p-3">
+                                    <span>Currently Assigned to No One</span>
+                    
+                                    <span>
+                                        <button class="edit_daily_employee_shift" data-timing="daily" data-hour="<%=h%>" data-date="<%=selected_date.toISOString()%>" data-employees = "<%=null%>">
+                                            Add Employee
+                                        </button>
+                                    </span>
+                                </div>
+                            <%})%>
+
+                        <%}else{%>
+                            <%hours.forEach((h)=>{%>
+                                <div class="p-3">
+                                    <% if (shift.shifts.has(h)) { %>
+                                        <% const people = shift.shifts.get(h); %>
+                                        <% if (people.length === 0) { %>
+                                            <span>Currently Addigned to No One</span>
+                                            
+                                            <span>
+                                                <button class="edit_daily_employee_shift" data-timing="daily" data-hour="<%=h%>" data-date="<%=selected_date.toISOString()%>" data-employees = '<%= JSON.stringify(shift.shifts.get(h) || []) %>' >
+                                                    Add Employee
+                                                </button>
+                                            </span>
+
+                                        <% } else { %>
+                                            <% people.forEach(person => { %>
+                                                <span class="shift_employee_container">
+                                                    <span><%= person %></span>
+
+                                                </span>
+                                            <% }) %>
+                    
+                                            <span>
+                                                <button class="edit_daily_employee_shift" data-timing="daily" data-hour="<%=h%>" data-date="<%=selected_date.toISOString()%>" data-employees = '<%= JSON.stringify(shift.shifts.get(h) || []) %>' >Edit Employee</button>
+                                            </span>
+
+                                        <% } %>
+                                    <% } else { %>
+                                        <span>Currently Addigned to No One</span>
+                                        <span>
+                                            <button class="edit_daily_employee_shift" data-timing="daily" data-hour="<%=h%>" data-date="<%=selected_date.toISOString()%>" data-employees = '<%= JSON.stringify(shift.shifts.get(h) || []) %>' >Add Employee</button>
+                                        </span>
+
+                                    <% } %>
+                                </div>
+                            <%})%>
+                        <%}%>
+                    </div>
+                    <div id="current_time_line"></div>
+                </div>
+            <%}%>
+        </div>
+        <div id="weekly_shift_container" class="hidden_task">
+
+            <div class="space"> </div>
+
+             <div class="list-group list-group-horizontal">
+                <button id="last_week_button" type="button" class="list-group-item">Previous Week</button>
+                <button id="this_week_button" type="button" class="list-group-item"></button>
+                <button id="next_week_button" type="button" class="list-group-item">Next Week</button>
+            </div>
+
+            
+
+            <!-- <%//Object.keys(week_shift).forEach(day=>{%>
+                <%//if(week_shift[day]){%>
+
+                    <%//week_shift[day].shifts."12am"%>
+                    
+                    <%//Array.from(week_shift[day].shifts.entries()).forEach(([hour,emps])=>{%>
+                        <%//=day + " " + hour + " " + emps%>
+                        <%//=week_shift[day].shifts.get(hour)%>
+
+                    <%//})%>
+                <%//}%>
+                
+            <%//})%> -->
+
+
+
+            <div class="hidden_task employee_edition " id="weekly_employee_edition">
+                <div class="return_to_shift_button_container">
+                    <button class="return_to_shift_button" id="weekly_return_to_shift_button">Return to weekly Shifts</button>
+                </div>
+    
+                <div class="weekly_current_shift_employees">
+                    <!-- <div class="space"> </div> -->
+                    <h3 id="weekly_users_with_shifts_header" class=" weekly_users_with_shifts_header">
+
+                    </h3>
+
+                    <div id="weekly_current_shift_employees" >
+                        
+                            <!-- <ol>
+                                <li>
+                                    <span></span>
+                                    <span><button></button></span>
+                                </li>
+                            </ol> -->
+                    </div>
+                    <div class="space"> </div>
+
+                <!-- <label for="add_shift">Add employee </label> -->
+                <input style="width:50%" type="text" placeholder="Search employee by name to add" id="weekly_add_shift" name="add_shift">
+                <span><ul id="weekly_search_results" class="list-group" class=""></ul></span>
+                </div>
+
+                
+            </div>
+
+
+            <div id="weekly_calendar_container">
+                <%const days_of_week = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]%>
+                <% const Sunday = new Date(selected_date); %>
+                <% const day = Sunday.getDay();%>
+                <% Sunday.setDate(Sunday.getDate()-day);%>
+                <% const days_to_date = {} %>
+                <%for(let i=0; i<7 ;i++){%>
+                    <% const cur_date = new Date(Sunday); %>
+                    <% cur_date.setDate(cur_date.getDate()+i); %>
+                    <% days_to_date[days_of_week[i]]=cur_date; %>
+                <%}%>
+
+
+                <%
+                function formatDateMMDDYY(date) {
+                    const mm = String(date.getMonth() + 1).padStart(2, '0');
+                    const dd = String(date.getDate()).padStart(2, '0');
+                    const yy = String(date.getFullYear()).slice(-2);
+                    return `${mm}/${dd}/${yy}`;
+                }
+                %>
+                <!-- Header row -->
+                <div class="p-3">Hours</div>
+                <div class="p-3">Sunday <%=formatDateMMDDYY(days_to_date["Sunday"])%></div>
+                <div class="p-3">Monday <%=formatDateMMDDYY(days_to_date["Monday"])%></div>
+                <div class="p-3">Tuesday <%=formatDateMMDDYY(days_to_date["Tuesday"])%></div>
+                <div class="p-3">Wednesday <%=formatDateMMDDYY(days_to_date["Wednesday"])%></div>
+                <div class="p-3">Thursday <%=formatDateMMDDYY(days_to_date["Thursday"])%></div>
+                <div class="p-3">Friday <%=formatDateMMDDYY(days_to_date["Friday"])%></div>
+                <div class="p-3">Saturday <%=formatDateMMDDYY(days_to_date["Saturday"])%></div>
+                <!-- calculate the current date to send to the back end for adding the shift onto the data base
+                                 we have hour, we have week day
+                                -->
+                
+
+                <% hours.forEach((h) => { %>
+                    <div class="p-3"><%= h %></div>
+                    <% days_of_week.forEach(day => { %>
+                        <%if(week_shift[day]){%>
+                            <%if(week_shift[day].shifts.has(h)){%>
+                                <div >
+                                    <%const workers = week_shift[day].shifts.get(h)%>
+                                    <%workers.forEach(worker=>{ %>
+                                        <div class="p-2 shift_employee_container"><%=worker%></div>
+                                    <%})%>
+
+                                    <span>
+                                        <button class="edit_weekly_employee_shift" data-hour="<%=h%>" data-timing="weekly" data-date="<%=week_shift[day].date.toISOString()%>" data-employees = "<%= JSON.stringify(week_shift[day].shifts.get(h) || []) %>" >Edit Employee</button>
+                                    </span>
+                                </div>
+                                
+                            <%}else{%>
+                                <div class="p-3">
+                                    Not Assigned
+                                    <span>
+                                        <button class="edit_weekly_employee_shift" data-hour="<%=h%>" data-timing="weekly" data-date="<%=days_to_date[day].toISOString()%>" data-employees = "<%=null%>" >Add Employee</button>
+                                    </span>
+                                </div>
+
+                            <%}%>
+                        <%}else{%>
+                            <div class="p-3">
+                                Not Assigned
+                                
+                                    
+                                <span>
+                                    <button class="edit_weekly_employee_shift" data-hour="<%=h%>" data-timing="weekly" data-date="<%=days_to_date[day].toISOString()%>" data-employees = "<%=null%>">Add Employee</button>
+                                </span>
+                            </div>
+                        <%}%>
+                        
+                    <% }) %>
+                <% }) %>
+            </div>
+
+        </div>
+
+        <div id="monthly_shift_container" class="hidden_task">
+
+            <div class="space"> </div>
+            
+            <div class="list-group list-group-horizontal">
+                <button id="last_month_button" type="button" class="list-group-item">Previous Month</button>
+                <button id="this_month_button" type="button" class="list-group-item"></button>
+                <button id="next_month_button" type="button" class="list-group-item">Next Month</button>
+            </div>
+
+        </div>
+
+        
+        
+
+        <div class="space"> </div>
+    </div>
+    <script src="/assets/ashifts_script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+</body>
+</html>

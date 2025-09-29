@@ -57,6 +57,15 @@ user.pre('save', async function(next) {
   next();
 });
 
+
+const advanced_shift = new mongoose.Schema({
+  date: { type: Date, required: true },
+  shifts: {
+    type: Map,
+    of: [String]  // key = shift name, value = array of names
+  }
+})
+
 // Create a model
 const dayshifts = mongoose.model('shifts', shifts, 'dayshifts'); // Explicitly specify the collection name
 const shift_hours =mongoose.model('shift_hours', hours, 'Hours');
@@ -64,6 +73,232 @@ const shift_hours =mongoose.model('shift_hours', hours, 'Hours');
 const task1_model= mongoose.model('task1_model',task1,'task1');
 
 const user_model = mongoose.model('user_model',user,'users');
+
+const advanced_shift_model = mongoose.model('advanced_shift_model',advanced_shift,'advanced_shift');
+
+
+
+
+const fetch_adv_shifts = async () => {
+  try{
+    const data = await advanced_shift_model.find({});
+    // console.log(data);
+    data.forEach((d)=>{
+      console.log(d.date);
+    })
+  }catch(err){
+    console.error("Error fetching day shifts:", err.message);
+  }
+}
+
+const fetch_adv_shifts_day = async (date) => {
+  const d = new Date(date);
+  const start = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0));
+  const end = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 23, 59, 59, 999));
+  try{
+    const res = await advanced_shift_model.findOne({
+      date: {$gte:start, $lte:end}
+    });
+    // console.log(res);
+    return res;
+    
+  }catch(err){
+    console.error("Error fetching day shifts:", err.message);
+  }
+}
+
+const fetch_adv_shifts_week = async (date) => {
+
+  week_object = {};
+
+  const Sunday = new Date(date);
+  const day = Sunday.getDay();
+  Sunday.setDate(Sunday.getDate()-day);
+
+  days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  for (let i=0; i<7;i++){
+    const curr_date = new Date(Sunday);
+    curr_date.setDate(curr_date.getDate()+i);
+
+    const start = new Date(Date.UTC(curr_date.getUTCFullYear(), curr_date.getUTCMonth(), curr_date.getUTCDate(), 0, 0, 0, 0));
+    const end = new Date(Date.UTC(curr_date.getUTCFullYear(), curr_date.getUTCMonth(), curr_date.getUTCDate(), 23, 59, 59, 999));
+    try{
+      const res = await advanced_shift_model.findOne({
+        date: {$gte:start, $lte:end}
+      });
+      week_object[days[i]]=res;
+      // console.log(res);
+    }catch(err){
+      console.error("Error fetching day shifts:", err.message);
+    }
+  }
+  return week_object;
+
+}
+
+// fetch_adv_shifts_week("2025-08-28");
+
+
+
+const add_person_to_shift = async (addable)=>{
+
+  const d = new Date(addable.date);
+  const start = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0));
+  const end = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 23, 59, 59, 999));
+
+  try{
+    const existing = await advanced_shift_model.findOne({
+      date: {$gte:start, $lte:end}
+    })
+    
+
+
+    if (existing){
+      console.log();
+
+      if (existing.shifts.has(addable.shift_time)){
+        const people = existing.shifts.get(addable.shift_time);
+        people.push(addable.name);
+        // console.log(existing);
+      }else{
+        existing.shifts.set(addable.shift_time,[addable.name]);
+      }
+      await existing.save();
+      return existing;
+    }else{
+      const new_shift = advanced_shift_model.create({
+        date:d,
+        shifts: {
+          [addable.shift_time]: [addable.name]
+        }
+      })
+
+      return new_shift;
+    }
+
+  }catch(err){
+    console.error("Error fetching day shifts:", err.message);
+  }
+}
+
+const addable = {
+  name: 'Mola',
+  shift_time: '11am',
+  date: '2025-08-31T05:32:46.031Z'
+}
+
+// add_person_to_shift(addable);
+// fetch_adv_shifts_day("2025-08-26");
+
+adv_data = {
+  date: new Date(),
+  shifts:{
+    "6am":["js","ruby on rails"],
+    "7am":["oracle","aws"],
+    "8am":["word"],
+    "9am":["power"],
+    "10am":["this fool"],
+    "11am":["mac"],
+    "12pm":["windows"],
+    "1pm":["prime"],
+    "2pm":["Kafka"],
+    "3pm":["Nika"],
+    "4pm":["Sun god"],
+    "5pm":["CS"],
+    "6pm":["pm"],
+    "7pm":["to"],
+    "8pm":["am"]
+  }
+}
+
+const add_to_shifts = async (data) =>{
+  const day = new Date(data.date);
+  day.setHours(0, 0, 0, 0); // Normalize to midnight
+  data.date = day;
+
+  const existing = await advanced_shift_model.findOne({ date: day });
+  try{
+    if (existing) {
+      const updated = await advanced_shift_model.updateOne(
+        {date:existing.date},
+        {$set:{shifts: data.shifts}}
+
+      )
+      console.log("Document for this date already exists, shifts were updated!");
+      return existing; // or return some message
+    }
+
+    const inserted = await advanced_shift_model.create(data);
+    console.log("Inserted:", inserted);
+    return inserted;
+  } catch (err) {
+    console.error("Error adding shifts:", err.message);
+    throw err;
+  }
+}
+
+// add_to_shifts(adv_data);
+
+
+//we have user name, time and date
+// user_data = {
+//             name:"Mola Tolo",
+//             hour:"12am",
+//             date: new Date('2025-09-02T03:07:57.006Z')
+//            }
+const remove_employee = async (user_data)=>{
+  try{
+    const day_info = await fetch_adv_shifts_day(user_data.date);
+
+    if (!day_info){
+      console.log("No shift found for that date");
+      return null;
+    }
+
+    const shift_list = day_info.shifts.get(user_data.hour) || [];
+
+    const updated_list = shift_list.filter(emp => emp !== user_data.name);
+
+    day_info.shifts.set(user_data.hour, updated_list);
+
+    await day_info.save();
+
+    return day_info;
+
+  } catch (err) {
+    console.error("Error removing employee:", err.message);
+  }
+}
+
+// remove_employee(user_data);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Example function to fetch all documents
 const fetchDayShifts = async () => {
@@ -315,9 +550,25 @@ const change_role = async (user) => {
   }else{
     console.log("Failed to change role")
   }
-  
-
 }
+
+const search_user = async (name)=>{
+    let users = await user_model.find({
+      $or:[
+        {first_name: {$regex: name,$options: "i" }},
+        {last_name: {$regex: name,$options: "i" }}
+      ]
+     
+      // last_name: {$regex: last_name,$options:"i"}
+    })
+    // console.log(users)
+    return users;
+    
+}
+
+// search_user("Zelalem");
+
+
 
 const changing={
   first_name: 'Zelalem',
@@ -365,5 +616,10 @@ module.exports = {
   find_user,
   add_user,
   get_all_users,
-  change_role
+  change_role,
+  search_user,
+  fetch_adv_shifts_day,
+  add_person_to_shift,
+  remove_employee,
+  fetch_adv_shifts_week
 };

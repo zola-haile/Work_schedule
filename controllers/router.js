@@ -30,7 +30,7 @@ module.exports = (app)=>{
 
     //displays the given page from the get go
     //currently, / is home page route
-    app.get('/',require_login,async(req,res)=>{
+    app.get('/', require_login, async(req,res)=>{
         try{
             let [name,hours] = await Promise.all(
                 //fetches name of people assigned to each day, along with day of the week + list of hours
@@ -71,7 +71,7 @@ module.exports = (app)=>{
 
 
     // /tasks leads to page where all the tasks get posted
-    app.get('/tasks',require_login,async (req,res)=>{
+    app.get('/tasks', require_login, async (req,res)=>{
        try{
             //
             let task_1_list = await (shifts.fetchtask1());
@@ -133,7 +133,7 @@ module.exports = (app)=>{
         
     })
 
-    app.get('/user',require_login,async (req,res)=>{
+    app.get('/user', require_login, async (req,res)=>{
 
         const all_users = await shifts.get_all_users();
         res.render('admin_user_tab',{req:req, user : all_users});
@@ -165,5 +165,51 @@ module.exports = (app)=>{
         shifts.change_role(editted_user_info);
         res.json({success:true})
     })
+
+    app.get("/users/search", require_login,async (req, res) => {
+        const query = req.query.q;
+        if (!query) {
+            return res.json([]);
+        }
+        try {
+            const users = await shifts.search_user(query);
+            // console.log(users);
+            res.json(users);
+        } catch (err) {
+            console.error("❌ Mongo search failed:", err);
+            res.status(500).json({ error: "Search failed" });
+        }
+    });
+
+    app.get("/ashift",require_login,async (req,res)=>{
+        const date =  req.query.date ? new Date(req.query.date) : new Date();
+        // console.log(date);
+        const day_shift = await shifts.fetch_adv_shifts_day(date);
+        const week_shift = await shifts.fetch_adv_shifts_week(date);
+        res.render('ashifts_tab',{shift:day_shift,selected_date:date,req,week_shift});
+    })
+
+    app.post("/adding_employee_shift",(req,res)=>{
+        const shift_personel = req.body;
+        // console.log(shift_personel);
+        shifts.add_person_to_shift(shift_personel);
+        res.json({success:true})
+    })
+
+    app.post("/remove_employee",(req,res)=>{
+        const user_data = req.body;
+
+        // console.log(user_data);
+
+        const removed = shifts.remove_employee(user_data);
+
+        if(!removed){
+            console.log("Sorry dod not remove");
+        }else{
+            console.log("Removed Successfully");
+        }
+
+        res.json({success:true});
+    });
 
 }
