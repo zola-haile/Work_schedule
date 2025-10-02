@@ -184,9 +184,10 @@ module.exports = (app)=>{
     app.get("/ashift",require_login,async (req,res)=>{
         const date =  req.query.date ? new Date(req.query.date) : new Date();
         // console.log(date);
+        const view = req.query.view || "daily";
         const day_shift = await shifts.fetch_adv_shifts_day(date);
         const week_shift = await shifts.fetch_adv_shifts_week(date);
-        res.render('ashifts_tab',{shift:day_shift,selected_date:date,req,week_shift});
+        res.render('ashifts_tab',{shift:day_shift,selected_date:date,req,week_shift,view});
     })
 
     app.post("/adding_employee_shift",(req,res)=>{

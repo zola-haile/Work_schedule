@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
         current_date.setDate(current_date.getDate()-1);
 
-        window.location.href=`/ashift?date=${current_date.toISOString().split("T")[0]}`;
+        window.location.href=`/ashift?date=${current_date.toISOString().split("T")[0]}&view=daily`;
     })
 
     const tomorrow_button = document.querySelector("#tomorrow_button");
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
         current_date.setDate(current_date.getDate()+1);
 
-        window.location.href=`/ashift?date=${current_date.toISOString().split("T")[0]}`;
+        window.location.href=`/ashift?date=${current_date.toISOString().split("T")[0]}&view=daily`;
     })
 
     const today_date_input = document.querySelector("#today_date_input");
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         event.preventDefault;
 
         const new_date = event.target.value;
-        window.location.href = `/ashift?date=${new_date}`;
+        window.location.href = `/ashift?date=${new_date}&view=daily`;
     })
 
     // today_date_input.addEventListener("click",(event)=>{
@@ -96,6 +96,42 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     //     employee_edition.classList.add("hidden_task");
     // })
+
+    const last_week_button = document.querySelector("#last_week_button");
+    last_week_button.addEventListener("click",(event)=>{
+        event.preventDefault()
+
+        const sunday = last_week_button.dataset.sunday;
+        const new_sunday = new Date(sunday);
+        new_sunday.setDate(new_sunday.getDate()-6);
+
+        // console.log(new_sunday);
+
+        window.location.href = `/ashift?date=${new_sunday}&view=weekly`;
+
+    })
+
+    const next_week_button = document.querySelector("#next_week_button");
+
+    next_week_button.addEventListener("click",(event)=>{
+        event.preventDefault();
+
+        const sunday = next_week_button.dataset.sunday;
+        const new_sunday = new Date(sunday);
+        new_sunday.setDate(new_sunday.getDate()+8);
+        console.log(new_sunday);
+
+        window.location.href = `/ashift?date=${new_sunday}&view=weekly`;
+    })
+
+    const this_week_input = document.querySelector("#this_week_input");
+
+    this_week_input.addEventListener("change",(event)=>{
+        event.preventDefault();
+
+        const new_date = event.target.value;
+        window.location.href = `/ashift?date=${new_date}&view=weekly`;
+    })
 
     
     
@@ -159,10 +195,15 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
 
 
+//####################//####################//####################//####################//####################//####################
+//does employee edition
+
     const daily_shift_container= document.querySelector("#daily_shift_container");
     const weekly_calendar_container = document.querySelector("#weekly_calendar_container");
     const weekly_shift_container= document.querySelector("#weekly_shift_container");
     const daily_calender_container = document.querySelector("#daily_calender_container");
+    const daily_employee_edition = document.querySelector("#daily_employee_edition");
+    const weekly_employee_edition = document.querySelector("#weekly_employee_edition");
 
     
 
@@ -218,8 +259,26 @@ document.addEventListener('DOMContentLoaded',()=>{
             const employees = bttn.dataset.employees ? JSON.parse(bttn.dataset.employees) : [];
             const timining = bttn.dataset.timing;
 
-            
+            weekly_calendar_container.style.display = "none";
+            daily_calender_container.style.display = "none";
+            daily_employee_edition.classList.add("hidden_task");
+
+            weekly_employee_edition.classList.remove("hidden_task");
+
+            shift_editor(timining,employees,hour,date);
         })
+
+    })
+
+    const weekly_return_to_shift_button = document.querySelector("#weekly_return_to_shift_button");
+    weekly_return_to_shift_button.addEventListener("click",(event)=>{
+        event.preventDefault();
+
+        weekly_calendar_container.style.display = "grid";
+        daily_calender_container.style.display = "none";
+        daily_employee_edition.classList.add("hidden_task");
+
+        weekly_employee_edition.classList.add("hidden_task");
 
     })
 

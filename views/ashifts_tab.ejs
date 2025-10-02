@@ -15,13 +15,13 @@
 
         <div class="space"> </div>
 
-        <div class="list-group list-group-horizontal ">
-            <button id="daily_button" type="button" class="list-group-item text-bg-secondary">Daily</button>
-            <button id="weekly_button" type="button" class="list-group-item">Weekly</button>
-            <button id="monthly_button" type="button" class="list-group-item">Monthly</button>
+        <div class="list-group list-group-horizontal">
+            <button id="daily_button" type="button" class="list-group-item <%= view === 'daily' ? 'text-bg-secondary' : '' %>">Daily</button>
+            <button id="weekly_button" type="button" class="list-group-item <%= view === 'weekly' ? 'text-bg-secondary' : '' %>">Weekly</button>
+            <button id="monthly_button" type="button" class="list-group-item <%= view === 'monthly' ? 'text-bg-secondary' : '' %>">Monthly</button>
         </div>
 
-        <div id="daily_shift_container" class="text-bg-secondary">
+        <div id="daily_shift_container" class="<%= view === 'daily' ? 'text-bg-secondary' : 'hidden_task' %>">
 
             <div class="space"> </div>
 
@@ -38,7 +38,7 @@
 
 
 
-            <div class="hidden_task employee_edition " id="daily_employee_edition">
+            <div class="hidden_task employee_edition" id="daily_employee_edition">
                 <div class="return_to_shift_button_container">
                     <button class="return_to_shift_button" id="daily_return_to_shift_button">Return to Daily Shifts</button>
                 </div>
@@ -140,14 +140,42 @@
                 </div>
             <%}%>
         </div>
-        <div id="weekly_shift_container" class="hidden_task">
+
+
+
+
+
+
+        <div id="weekly_shift_container" class="<%= view === 'weekly' ? 'text-bg-secondary' : 'hidden_task'%>">
+
+            <%const days_of_week = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]%>
+            <% const Sunday = new Date(selected_date); %>
+            <% const day = Sunday.getDay();%>
+            <% Sunday.setDate(Sunday.getDate()-day);%>
+            <% const days_to_date = {} %>
+            <%for(let i=0; i<7 ;i++){%>
+                <% const cur_date = new Date(Sunday); %>
+                <% cur_date.setDate(cur_date.getDate()+i); %>
+                <% days_to_date[days_of_week[i]]=cur_date; %>
+            <%}%>
+
+
+            <%
+            function formatDateMMDDYY(date) {
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const dd = String(date.getDate()).padStart(2, '0');
+                const yy = String(date.getFullYear()).slice(-2);
+                return `${mm}/${dd}/${yy}`;
+            }
+            %>
 
             <div class="space"> </div>
 
              <div class="list-group list-group-horizontal">
-                <button id="last_week_button" type="button" class="list-group-item">Previous Week</button>
-                <button id="this_week_button" type="button" class="list-group-item"></button>
-                <button id="next_week_button" type="button" class="list-group-item">Next Week</button>
+                <button id="last_week_button" type="button" data-sunday="<%=Sunday%>" class="list-group-item">Previous Week</button>
+                <input type="date" id="this_week_input" class="list-group-item" value="<%= selected_date.toISOString().split('T')[0] %>">
+                <!-- <button  type="button" ></button> -->
+                <button id="next_week_button" data-sunday="<%=Sunday%>" type="button" class="list-group-item">Next Week</button>
             </div>
 
             
@@ -200,26 +228,7 @@
 
 
             <div id="weekly_calendar_container">
-                <%const days_of_week = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]%>
-                <% const Sunday = new Date(selected_date); %>
-                <% const day = Sunday.getDay();%>
-                <% Sunday.setDate(Sunday.getDate()-day);%>
-                <% const days_to_date = {} %>
-                <%for(let i=0; i<7 ;i++){%>
-                    <% const cur_date = new Date(Sunday); %>
-                    <% cur_date.setDate(cur_date.getDate()+i); %>
-                    <% days_to_date[days_of_week[i]]=cur_date; %>
-                <%}%>
-
-
-                <%
-                function formatDateMMDDYY(date) {
-                    const mm = String(date.getMonth() + 1).padStart(2, '0');
-                    const dd = String(date.getDate()).padStart(2, '0');
-                    const yy = String(date.getFullYear()).slice(-2);
-                    return `${mm}/${dd}/${yy}`;
-                }
-                %>
+                
                 <!-- Header row -->
                 <div class="p-3">Hours</div>
                 <div class="p-3">Sunday <%=formatDateMMDDYY(days_to_date["Sunday"])%></div>
@@ -239,16 +248,25 @@
                     <% days_of_week.forEach(day => { %>
                         <%if(week_shift[day]){%>
                             <%if(week_shift[day].shifts.has(h)){%>
-                                <div >
-                                    <%const workers = week_shift[day].shifts.get(h)%>
-                                    <%workers.forEach(worker=>{ %>
-                                        <div class="p-2 shift_employee_container"><%=worker%></div>
-                                    <%})%>
+                                <%if(week_shift[day].shifts.get(h).length > 0){%>
+                                    <div >
+                                        <%const workers = week_shift[day].shifts.get(h)%>
+                                        <%workers.forEach(worker=>{ %>
+                                            <div class="p-2 shift_employee_container"><%=worker%></div>
+                                        <%})%>
 
-                                    <span>
-                                        <button class="edit_weekly_employee_shift" data-hour="<%=h%>" data-timing="weekly" data-date="<%=week_shift[day].date.toISOString()%>" data-employees = "<%= JSON.stringify(week_shift[day].shifts.get(h) || []) %>" >Edit Employee</button>
-                                    </span>
-                                </div>
+                                        <span>
+                                            <button class="edit_weekly_employee_shift" data-hour="<%=h%>" data-timing="weekly" data-date="<%=week_shift[day].date.toISOString()%>" data-employees = "<%= JSON.stringify(week_shift[day].shifts.get(h) || []) %>" >Edit Employee</button>
+                                        </span>
+                                    </div>
+                                <%}else{%>
+                                    <div class="p-3">
+                                        Not Assigned
+                                        <span>
+                                            <button class="edit_weekly_employee_shift" data-hour="<%=h%>" data-timing="weekly" data-date="<%=days_to_date[day].toISOString()%>" data-employees = "<%=null%>" >Add Employee</button>
+                                        </span>
+                                    </div>
+                                <%}%>
                                 
                             <%}else{%>
                                 <div class="p-3">
@@ -276,7 +294,7 @@
 
         </div>
 
-        <div id="monthly_shift_container" class="hidden_task">
+        <div id="monthly_shift_container" class="<%= view === 'monthly' ? 'text-bg-secondary' : 'hidden_task'%>">
 
             <div class="space"> </div>
             
