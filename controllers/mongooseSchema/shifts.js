@@ -139,6 +139,32 @@ const fetch_adv_shifts_week = async (date) => {
 
 // fetch_adv_shifts_week("2025-08-28");
 
+const fetch_adv_shifts_month = async (date) => {
+  const d = new Date(date);
+  const year  = d.getUTCFullYear();
+  const month = d.getUTCMonth();
+
+  const start = new Date(Date.UTC(year, month, 1,  0,  0,  0,   0));
+  const end   = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999)); // last day of month
+
+  try {
+    const docs = await advanced_shift_model.find({
+      date: { $gte: start, $lte: end }
+    });
+
+    // Return a plain object: "YYYY-MM-DD" -> shift document
+    const month_map = {};
+    docs.forEach(doc => {
+      const key = doc.date.toISOString().split('T')[0];
+      month_map[key] = doc;
+    });
+    return month_map;
+  } catch (err) {
+    console.error("Error fetching month shifts:", err.message);
+    return {};
+  }
+};
+
 
 
 const add_person_to_shift = async (addable)=>{
@@ -507,10 +533,10 @@ let user0_info = {
 let user_info = {
   first_name: "Abebe",
   last_name: "Zeleke",
-  email: "azeleke@nd.edu",
+  email: "z@y.h",
   netid: "azeleke",
   role: "admin",
-  password: "dontsuckem"
+  password: "z"
 }
 
 let user2_info = {
@@ -537,6 +563,7 @@ const add_user = async (user_info)=>{
 }
 
 // add_user(user_info);
+//use: z@y.h and z as password to test as admin
 
 //change role
 
@@ -621,5 +648,6 @@ module.exports = {
   fetch_adv_shifts_day,
   add_person_to_shift,
   remove_employee,
-  fetch_adv_shifts_week
+  fetch_adv_shifts_week,
+  fetch_adv_shifts_month
 };

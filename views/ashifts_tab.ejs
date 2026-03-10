@@ -39,33 +39,27 @@
 
 
             <div class="hidden_task employee_edition" id="daily_employee_edition">
-                <div class="return_to_shift_button_container">
-                    <button class="return_to_shift_button" id="daily_return_to_shift_button">Return to Daily Shifts</button>
+                <div class="ee-header">
+                    <button class="return_to_shift_button" id="daily_return_to_shift_button">← Back to Shifts</button>
+                    <h3 id="daily_users_with_shifts_header" class="ee-title"></h3>
                 </div>
-    
-                <div class="daily_current_shift_employees">
-                    <!-- <div class="space"> </div> -->
-                    <h3 id="daily_users_with_shifts_header" class=" daily_users_with_shifts_header">
 
-                    </h3>
-
-                    <div id="daily_current_shift_employees" >
-                        
-                            <!-- <ol>
-                                <li>
-                                    <span></span>
-                                    <span><button></button></span>
-                                </li>
-                            </ol> -->
+                <div class="ee-body">
+                    <div class="ee-section">
+                        <div class="ee-section-label">Currently Assigned</div>
+                        <div id="daily_current_shift_employees" class="ee-employees-list"></div>
                     </div>
-                    <div class="space"> </div>
 
-                <!-- <label for="add_shift">Add employee </label> -->
-                <input style="width:50%" type="text" placeholder="Search employee by name to add" id="daily_add_shift" name="add_shift">
-                <span><ul id="daily_search_results" class="list-group" class=""></ul></span>
+                    <div class="ee-section">
+                        <div class="ee-section-label">Add Employee</div>
+                        <div class="ee-search-wrapper">
+                            <input type="text" placeholder="Search by name..." id="daily_add_shift" name="add_shift" class="ee-search-input" autocomplete="off">
+                            <ul id="daily_search_results" class="ee-search-results"></ul>
+                        </div>
+                        <div id="daily_staged_employees" class="ee-staged-list"></div>
+                        <button type="button" id="daily_submit_shift" class="submit-shift-btn hidden_task">Save Changes</button>
+                    </div>
                 </div>
-
-                
             </div>
 
 
@@ -196,34 +190,28 @@
 
 
 
-            <div class="hidden_task employee_edition " id="weekly_employee_edition">
-                <div class="return_to_shift_button_container">
-                    <button class="return_to_shift_button" id="weekly_return_to_shift_button">Return to weekly Shifts</button>
+            <div class="hidden_task employee_edition" id="weekly_employee_edition">
+                <div class="ee-header">
+                    <button class="return_to_shift_button" id="weekly_return_to_shift_button">← Back to Shifts</button>
+                    <h3 id="weekly_users_with_shifts_header" class="ee-title"></h3>
                 </div>
-    
-                <div class="weekly_current_shift_employees">
-                    <!-- <div class="space"> </div> -->
-                    <h3 id="weekly_users_with_shifts_header" class=" weekly_users_with_shifts_header">
 
-                    </h3>
-
-                    <div id="weekly_current_shift_employees" >
-                        
-                            <!-- <ol>
-                                <li>
-                                    <span></span>
-                                    <span><button></button></span>
-                                </li>
-                            </ol> -->
+                <div class="ee-body">
+                    <div class="ee-section">
+                        <div class="ee-section-label">Currently Assigned</div>
+                        <div id="weekly_current_shift_employees" class="ee-employees-list"></div>
                     </div>
-                    <div class="space"> </div>
 
-                <!-- <label for="add_shift">Add employee </label> -->
-                <input style="width:50%" type="text" placeholder="Search employee by name to add" id="weekly_add_shift" name="add_shift">
-                <span><ul id="weekly_search_results" class="list-group" class=""></ul></span>
+                    <div class="ee-section">
+                        <div class="ee-section-label">Add Employee</div>
+                        <div class="ee-search-wrapper">
+                            <input type="text" placeholder="Search by name..." id="weekly_add_shift" name="add_shift" class="ee-search-input" autocomplete="off">
+                            <ul id="weekly_search_results" class="ee-search-results"></ul>
+                        </div>
+                        <div id="weekly_staged_employees" class="ee-staged-list"></div>
+                        <button type="button" id="weekly_submit_shift" class="submit-shift-btn hidden_task">Save Changes</button>
+                    </div>
                 </div>
-
-                
             </div>
 
 
@@ -296,13 +284,106 @@
 
         <div id="monthly_shift_container" class="<%= view === 'monthly' ? 'text-bg-secondary' : 'hidden_task'%>">
 
-            <div class="space"> </div>
-            
+            <%
+                const m_year  = selected_date.getUTCFullYear();
+                const m_month = selected_date.getUTCMonth();
+                const first_of_month  = new Date(Date.UTC(m_year, m_month, 1));
+                const days_in_month   = new Date(Date.UTC(m_year, m_month + 1, 0)).getUTCDate();
+                const start_weekday   = first_of_month.getUTCDay();
+                const month_label_str = first_of_month.toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+                const today_utc       = new Date();
+                const today_y = today_utc.getUTCFullYear();
+                const today_m = today_utc.getUTCMonth();
+                const today_d = today_utc.getUTCDate();
+            %>
+
+            <div class="space"></div>
+
             <div class="list-group list-group-horizontal">
-                <button id="last_month_button" type="button" class="list-group-item">Previous Month</button>
-                <button id="this_month_button" type="button" class="list-group-item"></button>
-                <button id="next_month_button" type="button" class="list-group-item">Next Month</button>
+                <button id="last_month_button" type="button" class="list-group-item"
+                    data-year="<%= m_year %>" data-month="<%= m_month %>">← Prev</button>
+                <div class="list-group-item month-label-display"><%= month_label_str %></div>
+                <button id="next_month_button" type="button" class="list-group-item"
+                    data-year="<%= m_year %>" data-month="<%= m_month %>">Next →</button>
             </div>
+
+            <div id="monthly_calendar_container">
+
+                <div class="month-header">Sun</div>
+                <div class="month-header">Mon</div>
+                <div class="month-header">Tue</div>
+                <div class="month-header">Wed</div>
+                <div class="month-header">Thu</div>
+                <div class="month-header">Fri</div>
+                <div class="month-header">Sat</div>
+
+                <% for (let s = 0; s < start_weekday; s++) { %>
+                    <div class="month-day-cell empty"></div>
+                <% } %>
+
+                <% for (let day_num = 1; day_num <= days_in_month; day_num++) { %>
+                    <%
+                        const cell_date = new Date(Date.UTC(m_year, m_month, day_num));
+                        const cell_key  = cell_date.toISOString().split('T')[0];
+                        const cell_shift = month_shift[cell_key];
+                        const is_today = (today_y === m_year && today_m === m_month && today_d === day_num);
+
+                        let shift_entries = [];
+                        if (cell_shift && cell_shift.shifts) {
+                            shift_entries = Array.from(cell_shift.shifts.entries())
+                                .filter(([h, people]) => people.length > 0)
+                                .sort((a, b) => {
+                                    const order = ["12am","1am","2am","3am","4am","5am","6am","7am","8am","9am","10am","11am","12pm","1pm","2pm","3pm","4pm","5pm","6pm","7pm","8pm","9pm","10pm","11pm"];
+                                    return order.indexOf(a[0]) - order.indexOf(b[0]);
+                                });
+                        }
+                        const shown_entries  = shift_entries.slice(0, 4);
+                        const hidden_count   = shift_entries.length - shown_entries.length;
+                        const total_assigned = shift_entries.reduce((sum, [h, p]) => sum + p.length, 0);
+                    %>
+
+                    <div class="month-day-cell <%= is_today ? 'today' : '' %> <%= shift_entries.length > 0 ? 'has-shifts' : '' %>"
+                         onclick="window.location.href='/ashift?date=<%= cell_key %>&view=daily'">
+
+                        <span class="day-number"><%= day_num %></span>
+
+                        <% if (shift_entries.length > 0) { %>
+                            <div class="month-shift-badge"><%= total_assigned %> assigned</div>
+                            <div class="month-shift-summary">
+                                <% shown_entries.forEach(([hour, people]) => { %>
+                                    <div class="month-shift-hour">
+                                        <span class="msh-hour"><%= hour %></span>
+                                        <span class="msh-people">
+                                            <% people.slice(0,2).forEach((p,idx) => { %>
+                                                <%= p.split(' ')[0] %><%= idx < Math.min(people.length,2)-1 ? ', ' : '' %>
+                                            <% }) %>
+                                            <% if (people.length > 2) { %><span class="msh-overflow">+<%= people.length-2 %></span><% } %>
+                                        </span>
+                                    </div>
+                                <% }); %>
+                                <% if (hidden_count > 0) { %>
+                                    <div class="month-shift-more">+<%= hidden_count %> more hour<%= hidden_count>1?'s':'' %></div>
+                                <% } %>
+                            </div>
+                        <% } else { %>
+                            <div class="month-no-shifts">No shifts</div>
+                        <% } %>
+
+                    </div>
+                <% } %>
+
+                <%
+                    const total_cells_so_far = start_weekday + days_in_month;
+                    const remainder = total_cells_so_far % 7;
+                    const trailing = remainder === 0 ? 0 : 7 - remainder;
+                %>
+                <% for (let t = 0; t < trailing; t++) { %>
+                    <div class="month-day-cell empty"></div>
+                <% } %>
+
+            </div>
+
+            <div class="space"></div>
 
         </div>
 
