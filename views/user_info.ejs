@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Career Portal — User Info</title>
     <link rel="stylesheet" href="/assets/style.css" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
 
@@ -13,15 +13,16 @@
         <%- include('nav'); -%>
 
         <div id="individual_user_container">
-            <h1>User name: <%= user.first_name + " " + user.last_name %></h1>
-            <h1>User email: <%= user.email %></h1>
-            <h1>User netid: <%= user.netid %></h1>
-            <h1>User email: <%= user.email %></h1>
-            <h1>User role: <%= user.role %></h1>
-
-            
-            
-            <button type="button" id="edit_user_buttom" >Edit user information</button>
+            <p><strong>Name:</strong> <%= user.first_name + " " + user.last_name %></p>
+            <p><strong>Email:</strong> <%= user.email %></p>
+            <p><strong>Net ID:</strong> <%= user.netid %></p>
+            <p><strong>Role:</strong>
+                <% if (user.role === "ca") { %>Career Assistant
+                <% } else if (user.role === "admin") { %>Administrator
+                <% } else if (user.role === "sub_admin") { %>Career Advisor
+                <% } %>
+            </p>
+            <button type="button" id="edit_user_buttom">Edit User</button>
         </div>
 
         <div id="edit_user_info" class="hidden_task">
@@ -29,27 +30,27 @@
 
                 <input type="hidden" id="user_id" name="user_id" value="<%= user.id %>">
 
-                <label for="first_name">User Frist Name</label>
+                <label for="first_name">First Name</label>
                 <input type="text" id="first_name" name="first_name" value="<%=user.first_name%>">
 
                 <br>
 
-                <label for="last_name">User Last Name</label>
+                <label for="last_name">Last Name</label>
                 <input type="text" id="last_name" name="last_name" value="<%=user.last_name%>">
 
                 <br>
 
-                <label for="email">User email</label>
+                <label for="email">Email</label>
                 <input type="text" id="email" name="email" value="<%=user.email%>">
 
                 <br>
 
-                <label for="netid">User netid</label>
+                <label for="netid">Net ID</label>
                 <input type="text" id="netid" name="netid" value="<%=user.netid%>">
 
                 <br>
 
-                <label for="role">User Role</label>
+                <label for="role">Role</label>
                     <%
                         let user_role = "";
                         if (user.role === "ca") {
@@ -79,6 +80,7 @@
         </div>
     </div>
 
+    <script src="/assets/portal.js"></script>
     <script src="/assets/user_info_script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 </body>

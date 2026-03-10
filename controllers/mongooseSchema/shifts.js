@@ -565,6 +565,16 @@ const add_user = async (user_info)=>{
 // add_user(user_info);
 //use: z@y.h and z as password to test as admin
 
+const remove_user = async (email) => {
+  try {
+    const result = await user_model.deleteOne({ email });
+    return result.deletedCount > 0;
+  } catch (err) {
+    console.error("Error removing user:", err.message);
+    return false;
+  }
+};
+
 //change role
 
 const change_role = async (user) => {
@@ -649,5 +659,6 @@ module.exports = {
   add_person_to_shift,
   remove_employee,
   fetch_adv_shifts_week,
-  fetch_adv_shifts_month
+  fetch_adv_shifts_month,
+  remove_user
 };

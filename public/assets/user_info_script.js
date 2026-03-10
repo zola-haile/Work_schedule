@@ -57,14 +57,13 @@ document.addEventListener('DOMContentLoaded',()=>{
 
             if (!response.ok) throw new Error("Failed to send data");
 
-            const result = await response.json();
-
+            await response.json();
+            if (window.showToast) window.showToast("User updated successfully!", "success");
+            setTimeout(() => window.location.reload(), 700);
         }catch (error){
-            console.error("❌ Error sending shift data:", error);
+            console.error("❌ Error updating user:", error);
+            if (window.showToast) window.showToast("Failed to update user. Try again.", "error");
         }
-
-        document.querySelector("#individual_user_container").classList.remove("hidden_task");
-        document.querySelector("#edit_user_info").classList.add("hidden_task");
         
         // console.log(first_name);
     })

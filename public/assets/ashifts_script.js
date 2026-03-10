@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     daily_button.addEventListener("click", (e) => {
         e.preventDefault();
-        daily_button.classList.add("text-bg-secondary");
-        weekly_button.classList.remove("text-bg-secondary");
-        monthly_button.classList.remove("text-bg-secondary");
+        daily_button.classList.add("active");
+        weekly_button.classList.remove("active");
+        monthly_button.classList.remove("active");
 
         document.querySelector("#daily_shift_container").classList.remove("hidden_task");
         document.querySelector("#weekly_shift_container").classList.add("hidden_task");
@@ -18,9 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     weekly_button.addEventListener("click", (e) => {
         e.preventDefault();
-        weekly_button.classList.add("text-bg-secondary");
-        daily_button.classList.remove("text-bg-secondary");
-        monthly_button.classList.remove("text-bg-secondary");
+        weekly_button.classList.add("active");
+        daily_button.classList.remove("active");
+        monthly_button.classList.remove("active");
 
         document.querySelector("#weekly_shift_container").classList.remove("hidden_task");
         document.querySelector("#daily_shift_container").classList.add("hidden_task");
@@ -29,9 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     monthly_button.addEventListener("click", (e) => {
         e.preventDefault();
-        monthly_button.classList.add("text-bg-secondary");
-        daily_button.classList.remove("text-bg-secondary");
-        weekly_button.classList.remove("text-bg-secondary");
+        monthly_button.classList.add("active");
+        daily_button.classList.remove("active");
+        weekly_button.classList.remove("active");
 
         document.querySelector("#monthly_shift_container").classList.remove("hidden_task");
         document.querySelector("#daily_shift_container").classList.add("hidden_task");
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const d = new Date(yesterday_button.getAttribute('cur_date'));
         d.setDate(d.getDate() - 1);
-        window.location.href = `/ashift?date=${d.toISOString().split("T")[0]}&view=daily`;
+        window.location.href = `/?date=${d.toISOString().split("T")[0]}&view=daily`;
     });
 
     const tomorrow_button = document.querySelector("#tomorrow_button");
@@ -52,11 +52,17 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const d = new Date(tomorrow_button.getAttribute('cur_date'));
         d.setDate(d.getDate() + 1);
-        window.location.href = `/ashift?date=${d.toISOString().split("T")[0]}&view=daily`;
+        window.location.href = `/?date=${d.toISOString().split("T")[0]}&view=daily`;
     });
 
     document.querySelector("#today_date_input").addEventListener("change", (e) => {
-        window.location.href = `/ashift?date=${e.target.value}&view=daily`;
+        window.location.href = `/?date=${e.target.value}&view=daily`;
+    });
+
+    document.querySelector("#jump_to_today").addEventListener("click", (e) => {
+        e.preventDefault();
+        const today = new Date().toISOString().split("T")[0];
+        window.location.href = `/?date=${today}&view=daily`;
     });
 
     const last_week_button = document.querySelector("#last_week_button");
@@ -64,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const d = new Date(last_week_button.dataset.sunday);
         d.setDate(d.getDate() - 6);
-        window.location.href = `/ashift?date=${d}&view=weekly`;
+        window.location.href = `/?date=${d}&view=weekly`;
     });
 
     const next_week_button = document.querySelector("#next_week_button");
@@ -72,11 +78,17 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const d = new Date(next_week_button.dataset.sunday);
         d.setDate(d.getDate() + 8);
-        window.location.href = `/ashift?date=${d}&view=weekly`;
+        window.location.href = `/?date=${d}&view=weekly`;
     });
 
     document.querySelector("#this_week_input").addEventListener("change", (e) => {
-        window.location.href = `/ashift?date=${e.target.value}&view=weekly`;
+        window.location.href = `/?date=${e.target.value}&view=weekly`;
+    });
+
+    document.querySelector("#jump_to_this_week").addEventListener("click", (e) => {
+        e.preventDefault();
+        const today = new Date().toISOString().split("T")[0];
+        window.location.href = `/?date=${today}&view=weekly`;
     });
 
     const last_month_button = document.querySelector("#last_month_button");
@@ -85,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const year  = parseInt(last_month_button.dataset.year);
         const month = parseInt(last_month_button.dataset.month); // 0-indexed
         const prev  = new Date(Date.UTC(year, month - 1, 1));
-        window.location.href = `/ashift?date=${prev.toISOString().split('T')[0]}&view=monthly`;
+        window.location.href = `/?date=${prev.toISOString().split('T')[0]}&view=monthly`;
     });
 
     const next_month_button = document.querySelector("#next_month_button");
@@ -94,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const year  = parseInt(next_month_button.dataset.year);
         const month = parseInt(next_month_button.dataset.month); // 0-indexed
         const next  = new Date(Date.UTC(year, month + 1, 1));
-        window.location.href = `/ashift?date=${next.toISOString().split('T')[0]}&view=monthly`;
+        window.location.href = `/?date=${next.toISOString().split('T')[0]}&view=monthly`;
     });
 
     // ── Utility ─────────────────────────────────────────────────────
@@ -178,6 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimeLine();
     setInterval(updateTimeLine, 60000);
 
+    // ── Highlight current hour row ───────────────────────────────────
+    if (window.highlightCurrentHour) window.highlightCurrentHour();
+
     // ── Shift editor (staging flow) ──────────────────────────────────
     function shift_editor(timing, employees, hour, date) {
 
@@ -198,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             employees.forEach(emp => {
                 const chip = makeChip(emp, "assigned");
                 chip.querySelector(".chip-remove").addEventListener("click", async () => {
+                    if (!confirm(`Remove ${emp} from this shift?`)) return;
                     chip.classList.add("removing");
                     try {
                         const res = await fetch("/remove_employee", {
@@ -206,9 +222,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             body: JSON.stringify({ name: emp, hour, date })
                         });
                         if (!res.ok) throw new Error("Failed to remove");
+                        if (window.showToast) window.showToast(`${emp} removed from shift.`, "success");
                         setTimeout(() => chip.remove(), 200);
                     } catch (err) {
                         console.error("Error removing:", err);
+                        if (window.showToast) window.showToast("Failed to remove. Try again.", "error");
                         chip.classList.remove("removing");
                     }
                 });
@@ -258,9 +276,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     if (!res.ok) throw new Error("Failed to add " + name);
                 }
-                window.location.reload();
+                if (window.showToast) window.showToast(`${staged.length} employee${staged.length > 1 ? 's' : ''} added to shift.`, "success");
+                setTimeout(() => window.location.reload(), 700);
             } catch (err) {
                 console.error("Error saving:", err);
+                if (window.showToast) window.showToast("Failed to save. Try again.", "error");
                 submit_btn.disabled    = false;
                 submit_btn.textContent = "Save Changes";
             }
@@ -327,5 +347,50 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         return chip;
     }
+
+    // ── CA: accept / drop shift ──────────────────────────────────────
+    async function ca_shift_action(btn, endpoint, payload, loadingText, successMsg) {
+        btn.disabled = true;
+        const orig = btn.textContent;
+        btn.textContent = loadingText;
+        try {
+            const res = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error("Request failed");
+            if (window.showToast) window.showToast(successMsg, "success");
+            setTimeout(() => window.location.reload(), 700);
+        } catch (err) {
+            console.error(err);
+            if (window.showToast) window.showToast("Something went wrong. Try again.", "error");
+            btn.disabled = false;
+            btn.textContent = orig;
+        }
+    }
+
+    document.querySelectorAll(".ca-accept-shift").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            ca_shift_action(btn, "/adding_employee_shift", {
+                name:       btn.dataset.name,
+                shift_time: btn.dataset.hour,
+                date:       btn.dataset.date
+            }, "Accepting…", "Shift accepted!");
+        });
+    });
+
+    document.querySelectorAll(".ca-drop-shift").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (!confirm("Drop this shift? This can't be undone.")) return;
+            ca_shift_action(btn, "/remove_employee", {
+                name: btn.dataset.name,
+                hour: btn.dataset.hour,
+                date: btn.dataset.date
+            }, "Dropping…", "Shift dropped.");
+        });
+    });
 
 });

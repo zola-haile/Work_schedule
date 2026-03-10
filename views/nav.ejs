@@ -14,11 +14,19 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbar-body">
-     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-      <li class="nav-item"><a class="nav-link" href="/">Shifts</a></li>
-      <li class="nav-item"><a class="nav-link" href="/tasks">Tasks</a></li>
-      <li class="nav-item"><a class="nav-link" href="/user">User</a></li>
-      <li class="nav-item"><a class="nav-link" href="/ashift">Advanced Shifts</a></li>
+     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+      <li class="nav-item"><a class="nav-link <%= req.path === '/' ? 'active' : '' %>" href="/">Shifts</a></li>
+      <li class="nav-item"><a class="nav-link <%= req.path === '/tasks' ? 'active' : '' %>" href="/tasks">Tasks</a></li>
+      <li class="nav-item"><a class="nav-link <%= req.path === '/user' ? 'active' : '' %>" href="/user">User</a></li>
+      <li class="nav-item nav-divider"></li>
+      <% if (req.session && req.session.user) { %>
+      <li class="nav-item">
+        <a class="nav-link nav-user-chip" href="/user">
+          <%= req.session.user.first_name %> <%= req.session.user.last_name %>
+        </a>
+      </li>
+      <% } %>
+      <li class="nav-item"><a class="nav-link nav-logout" href="/logout">Sign Out</a></li>
      </ul>
     </div>
    </div>

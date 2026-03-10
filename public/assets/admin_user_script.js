@@ -48,14 +48,15 @@ document.addEventListener('DOMContentLoaded',()=>{
 
             if (!response.ok) throw new Error("Failed to send data");
 
-            const result = await response.json();
-
+            await response.json();
+            if (window.showToast) window.showToast("User added successfully!", "success");
+            document.querySelector("#user_details").classList.remove("hidden_task");
+            document.querySelector("#adduser_form_container").classList.add("hidden_task");
+            document.querySelector("#add_form").reset();
         }catch (error){
-            console.error("❌ Error sending shift data:", error);
+            console.error("❌ Error adding user:", error);
+            if (window.showToast) window.showToast("Failed to add user. Try again.", "error");
         }
-
-        document.querySelector("#user_details").classList.remove("hidden_task");
-        document.querySelector("#adduser_form_container").classList.add("hidden_task");
     })
 
     const show_all_users = document.querySelector("#show_all_users");
@@ -77,13 +78,47 @@ document.addEventListener('DOMContentLoaded',()=>{
     })
 
     document.querySelector("#users_display_container")
-        .addEventListener("click",(event)=>{
+        .addEventListener("click", async (event) => {
+            // Remove button — handle separately, don't navigate
+            const remove_btn = event.target.closest(".remove-user-btn");
+            if (remove_btn) {
+                const email = remove_btn.dataset.email;
+                const name  = remove_btn.dataset.name;
+                if (!confirm(`Remove ${name} from the system? This cannot be undone.`)) return;
+
+                remove_btn.disabled = true;
+                remove_btn.textContent = "Removing…";
+
+                try {
+                    const res = await fetch("/user/remove", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email })
+                    });
+                    if (!res.ok) throw new Error("Failed to remove user");
+
+                    if (window.showToast) window.showToast(`${name} has been removed.`, "success");
+                    const row = remove_btn.closest("tr");
+                    if (row) {
+                        row.style.transition = "opacity 0.3s ease";
+                        row.style.opacity = "0";
+                        setTimeout(() => row.remove(), 320);
+                    }
+                } catch (err) {
+                    console.error("Error removing user:", err);
+                    if (window.showToast) window.showToast("Failed to remove user. Try again.", "error");
+                    remove_btn.disabled = false;
+                    remove_btn.textContent = "Remove";
+                }
+                return;
+            }
+
+            // Row click — navigate to user profile
             const row = event.target.closest(".user_info_row");
             if (!row) return;
-
             const user_email = row.dataset.userEmail;
             window.location.href = `/user/${user_email}`;
-        }); 
+        });
 
     const search_input= document.querySelector("#search_user");
     const result_box = document.querySelector("#search_results");

@@ -95,6 +95,119 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* ── Role banner ────────────────────────────────────────────── */
+.role-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  border: 1px solid transparent;
+}
+
+.role-icon { font-style: normal; }
+
+.role-banner--admin {
+  background: rgba(88,166,255,0.1);
+  border-color: rgba(88,166,255,0.25);
+  color: var(--accent-2);
+}
+
+.role-banner--sub_admin {
+  background: rgba(210,153,34,0.1);
+  border-color: rgba(210,153,34,0.3);
+  color: #ffd580;
+}
+
+.role-banner--ca {
+  background: rgba(63,185,80,0.1);
+  border-color: rgba(63,185,80,0.3);
+  color: #6bd67b;
+}
+
+/* ── No-assign label ────────────────────────────────────────── */
+.no-assign-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── CA accept / drop buttons ───────────────────────────────── */
+.ca-accept-shift {
+  background: rgba(63,185,80,0.15);
+  color: #6bd67b;
+  border: 1px solid rgba(63,185,80,0.35);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.28rem 0.65rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.ca-accept-shift:hover:not(:disabled) {
+  background: rgba(63,185,80,0.28);
+  border-color: var(--success);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(63,185,80,0.25);
+}
+
+.ca-drop-shift {
+  background: rgba(248,81,73,0.12);
+  color: #ffa3a0;
+  border: 1px solid rgba(248,81,73,0.3);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.28rem 0.65rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.ca-drop-shift:hover:not(:disabled) {
+  background: rgba(248,81,73,0.22);
+  border-color: var(--danger);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(248,81,73,0.2);
+}
+
+.ca-accept-shift:disabled,
+.ca-drop-shift:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── "Mine" chip highlight (CA's own shift) ─────────────────── */
+.shift_employee_container.mine {
+  background: rgba(63,185,80,0.15);
+  border-color: rgba(63,185,80,0.4);
+  color: #6bd67b;
+  font-weight: 600;
+}
+
+/* CA "you" dot in monthly badge */
+.ca-dot {
+  color: #6bd67b;
+  font-weight: 700;
+}
+
+/* Monthly cell highlight when CA is working that day */
+.month-day-cell.ca-working {
+  border-color: rgba(63,185,80,0.4);
+}
+
+.month-day-cell.ca-working .day-number {
+  background: rgba(63,185,80,0.2);
+  color: #6bd67b;
+  border-radius: 50%;
+}
+
 .nav-link {
   color: var(--text-secondary) !important;
   font-weight: 500;
@@ -127,6 +240,31 @@ body {
 .nav-link.active::after {
   width: 60%;
 }
+
+.nav-link.active {
+  color: var(--text-primary) !important;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  align-self: center;
+  margin: 0 0.25rem;
+}
+
+.nav-logout {
+  color: var(--danger) !important;
+  opacity: 0.8;
+}
+
+.nav-logout:hover {
+  color: var(--danger) !important;
+  opacity: 1;
+  background: rgba(248,81,73,0.1) !important;
+}
+
+.nav-logout::after { display: none; }
 
 .navbar-toggler {
   border-color: var(--border) !important;
@@ -682,9 +820,10 @@ td:first-child {
    User Tab
    ============================================================ */
 #user_body_container {
+  display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 1rem;
+  padding: 1.5rem 1rem;
   gap: 1.5rem;
 }
 
@@ -698,11 +837,33 @@ td:first-child {
   animation: fadeInUp 0.35s ease;
 }
 
+.user-profile-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -0.02em;
+}
+
 #user_details p {
-  font-size: 0.9rem;
-  padding: 0.4rem 0;
+  font-size: 0.875rem;
+  padding: 0.45rem 0;
   border-bottom: 1px solid var(--border);
   color: var(--text-primary);
+  display: flex;
+  gap: 0.5rem;
+}
+
+#user_details p strong {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  min-width: 60px;
+  padding-top: 1px;
 }
 
 #user_details p:last-of-type {
@@ -857,31 +1018,141 @@ td:first-child {
   animation: fadeInUp 0.35s ease;
 }
 
-#individual_user_container h1 {
-  font-size: 1rem;
-  font-weight: 500;
+#individual_user_container p {
+  font-size: 0.9rem;
   color: var(--text-primary);
   padding: 0.5rem 0;
   border-bottom: 1px solid var(--border);
   margin: 0;
 }
 
-#individual_user_container h1:last-of-type {
+#individual_user_container p strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 0.4rem;
+}
+
+#individual_user_container p:last-of-type {
   border-bottom: none;
   margin-bottom: 1.25rem;
+}
+
+#individual_user_container button {
+  margin-top: 0.25rem;
+}
+
+/* ============================================================
+   Page Header
+   ============================================================ */
+.page-header {
+  padding: 1.25rem 0 0.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+.page-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
 }
 
 /* ============================================================
    Advanced Shifts (ashifts_tab)
    ============================================================ */
 
-/* View toggle buttons */
-.list-group.list-group-horizontal {
-  gap: 2px;
-  flex-wrap: wrap;
-  padding: 1rem 0 0.5rem;
+/* ── View toggle ─────────────────────────────────────────── */
+.view-toggle-bar {
+  display: flex;
+  gap: 4px;
+  padding: 0.75rem 0 0;
 }
 
+.view-toggle-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.45rem 1.1rem;
+  transition: var(--transition);
+}
+
+.view-toggle-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-accent);
+}
+
+.view-toggle-btn.active {
+  background: var(--accent);
+  color: #0d1117;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── Date navigation ─────────────────────────────────────── */
+.date-nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.75rem 0 0.25rem;
+}
+
+.date-nav-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  transition: var(--transition);
+}
+
+.date-nav-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-accent);
+}
+
+.date-nav-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-family: inherit;
+  padding: 0.38rem 0.6rem;
+  transition: var(--transition);
+  outline: none;
+  cursor: pointer;
+}
+
+.date-nav-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.date-nav-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 0.38rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  min-width: 160px;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+/* Bootstrap list-group (used for user search results only) */
 .list-group-item {
   background: var(--bg-card) !important;
   border-color: var(--border) !important;
@@ -900,7 +1171,6 @@ td:first-child {
   z-index: 1;
 }
 
-.list-group-item.text-bg-secondary,
 .list-group-item.active {
   background: var(--accent) !important;
   color: #0d1117 !important;
@@ -1549,6 +1819,173 @@ td:first-child {
    ============================================================ */
 .hidden_task {
   display: none !important;
+}
+
+/* ============================================================
+   Toast Notifications
+   ============================================================ */
+#toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid transparent;
+  opacity: 0;
+  transform: translateX(1rem);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  max-width: 320px;
+  pointer-events: auto;
+}
+
+.toast--show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast--success {
+  background: rgba(63,185,80,0.15);
+  border-color: rgba(63,185,80,0.35);
+  color: #6bd67b;
+}
+
+.toast--error {
+  background: rgba(248,81,73,0.15);
+  border-color: rgba(248,81,73,0.3);
+  color: #ffa3a0;
+}
+
+.toast--info {
+  background: rgba(88,166,255,0.12);
+  border-color: rgba(88,166,255,0.3);
+  color: var(--accent-2);
+}
+
+.toast-icon {
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   Current hour highlight
+   ============================================================ */
+.current-hour-row {
+  background: rgba(88,166,255,0.06) !important;
+  border-left: 2px solid var(--accent) !important;
+}
+
+/* ============================================================
+   Empty state
+   ============================================================ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  gap: 0.5rem;
+}
+
+.empty-state-icon {
+  font-size: 2.5rem;
+  opacity: 0.4;
+  margin-bottom: 0.25rem;
+}
+
+.empty-state-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.empty-state-sub {
+  font-size: 0.82rem;
+}
+
+/* ============================================================
+   Nav user chip
+   ============================================================ */
+.nav-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  margin-right: 0.25rem;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.nav-user-chip:hover {
+  background: var(--bg-card) !important;
+  color: var(--text-secondary) !important;
+  border-color: var(--border) !important;
+}
+
+/* ── Remove user button ──────────────────────────────────── */
+.remove-user-btn {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid rgba(248,81,73,0.35);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  transition: var(--transition);
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.remove-user-btn:hover {
+  background: rgba(248,81,73,0.12);
+  border-color: var(--danger);
+}
+
+.remove-user-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── "Today" quick button ────────────────────────────────── */
+.date-today-btn {
+  background: rgba(88,166,255,0.1);
+  border: 1px solid rgba(88,166,255,0.3);
+  color: var(--accent);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.38rem 0.7rem;
+  transition: var(--transition);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.date-today-btn:hover {
+  background: rgba(88,166,255,0.2);
+  border-color: var(--accent);
 }
 
 /* ============================================================

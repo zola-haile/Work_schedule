@@ -76,10 +76,13 @@ document.addEventListener("DOMContentLoaded",()=>{
 
             if (!response.ok) throw new Error("Failed to send data");
 
-            const result = await response.json();
+            await response.json();
+            if (window.showToast) window.showToast("Task added successfully!", "success");
+            setTimeout(() => window.location.reload(), 700);
+            return;
         }catch (error){
-            console.error("❌ Error sending shift data:", error);
-            alert("Something went wrong: " + error.message);
+            console.error("❌ Error adding task:", error);
+            if (window.showToast) window.showToast("Something went wrong: " + error.message, "error");
         }
 
     });
@@ -118,7 +121,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 
         document.querySelector("#cont_1").classList.remove('hidden_task');
-        document.querySelector("#cont_2").classList.add('hidden_task')
         document.querySelector("#task_form_1").classList.add('hidden_task');
 
     });
@@ -128,7 +130,11 @@ document.addEventListener("DOMContentLoaded",()=>{
     done_buttons.forEach(buttn=>{
 
         buttn.addEventListener('click', async ()=>{
+            if (!confirm("Mark this task as done? It will be removed from the list.")) return;
             const taskID = buttn.getAttribute('data_id');
+            const card = buttn.closest('.task_card');
+            buttn.disabled = true;
+            buttn.textContent = "Saving…";
             try{
                 const response = await fetch("/task/done",{
                     method: "POST",
@@ -139,14 +145,24 @@ document.addEventListener("DOMContentLoaded",()=>{
 
                 });
                 if (response.ok){
-                    console.log("Task marked as complete!");
+                    if (window.showToast) window.showToast("Task marked as complete!", "success");
+                    if (card) {
+                        card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+                        card.style.opacity = "0";
+                        card.style.transform = "scale(0.95)";
+                        setTimeout(() => card.remove(), 320);
+                    }
                 }else{
-                    alert("Failed to update task.");
+                    if (window.showToast) window.showToast("Failed to update task.", "error");
+                    buttn.disabled = false;
+                    buttn.textContent = "Done";
                 }
             }
             catch (err) {
                 console.error("Error:", err);
-                        alert("An error occurred.");
+                if (window.showToast) window.showToast("An error occurred.", "error");
+                buttn.disabled = false;
+                buttn.textContent = "Done";
             }
         });
     });
@@ -284,11 +300,12 @@ document.addEventListener("DOMContentLoaded",()=>{
 
             if (!response.ok) throw new Error("Failed to send data");
 
-            const result = await response.json();
-
+            await response.json();
+            if (window.showToast) window.showToast("Task updated successfully.", "success");
+            setTimeout(() => window.location.reload(), 700);
         }catch (error){
             console.error("❌ Error sending shift data:", error);
-            alert("Something went wrong: " + error.message);
+            if (window.showToast) window.showToast("Something went wrong: " + error.message, "error");
         }
 
     })

@@ -28,44 +28,16 @@ module.exports = (app)=>{
         return res.redirect('/');
     })
 
-    //displays the given page from the get go
-    //currently, / is home page route
-    app.get('/', require_login, async(req,res)=>{
-        try{
-            let [name,hours] = await Promise.all(
-                //fetches name of people assigned to each day, along with day of the week + list of hours
-                [shifts.fetchDayShifts(),shifts.fetchHours()]
-            )
-            // console.log(req.session.user.first_name);
-            res.render('admin_shift_tab',{item:name,item2:hours,req:req});
-        }catch(err){
-            console.log("Sorry No luck");
-            res.status(500).send("Internal Server Error");
-        }
-
-    });
-
-    app.post('/', (req, res) => {
-        // console.log("here");
-        const { first, second, i, j } = req.body;
-
-        // console.log("Received data:");
-        // console.log("First Input:", first);
-        // console.log("Second Input:", second);
-        // console.log("i:", i);
-        // console.log("j:", j);
-
-        // Call the function to update the database
-        shifts.edit_dayshifts(parseInt(i),parseInt(j),first,second)
-            .then(() => {
-                console.log("Database updated successfully");
-            })
-            .catch((error) => {
-                console.error("Error updating database:", error);
-            });
-
-        // Respond with a message or process the data
-        res.json({ message: "Shift successfully submitted!" });
+    // Home page — advanced shifts
+    app.get('/', require_login, async (req, res) => {
+        const date = req.query.date ? new Date(req.query.date) : new Date();
+        const view = req.query.view || "daily";
+        const [day_shift, week_shift, month_shift] = await Promise.all([
+            shifts.fetch_adv_shifts_day(date),
+            shifts.fetch_adv_shifts_week(date),
+            shifts.fetch_adv_shifts_month(date)
+        ]);
+        res.render('ashifts_tab', { shift: day_shift, selected_date: date, req, week_shift, month_shift, view });
     });
 
 
@@ -154,9 +126,29 @@ module.exports = (app)=>{
 
     app.get("/user/:id", require_login,async (req,res) => {
         const user = await shifts.find_user(req.params.id);
-        res.render('user_info',{user:user});
+        res.render('user_info',{user:user, req:req});
         // res.json(user);
     })
+
+    app.get('/logout', (req, res) => {
+        req.session.destroy();
+        res.redirect('/login');
+    });
+
+    app.post('/user/remove', async (req, res) => {
+        const { email } = req.body;
+        try {
+            const removed = await shifts.remove_user(email);
+            if (removed) {
+                res.json({ success: true });
+            } else {
+                res.status(404).json({ success: false, error: "User not found" });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ success: false, error: "Server error" });
+        }
+    });
 
     app.post("/user/update", async (req,res)=>{
         const editted_user_info = req.body;
@@ -181,16 +173,11 @@ module.exports = (app)=>{
         }
     });
 
-    app.get("/ashift",require_login,async (req,res)=>{
-        const date =  req.query.date ? new Date(req.query.date) : new Date();
-        const view = req.query.view || "daily";
-        const [day_shift, week_shift, month_shift] = await Promise.all([
-            shifts.fetch_adv_shifts_day(date),
-            shifts.fetch_adv_shifts_week(date),
-            shifts.fetch_adv_shifts_month(date)
-        ]);
-        res.render('ashifts_tab',{shift:day_shift, selected_date:date, req, week_shift, month_shift, view});
-    })
+    // Legacy redirect — keep old /ashift URLs working
+    app.get("/ashift", require_login, (req, res) => {
+        const query = new URLSearchParams(req.query).toString();
+        res.redirect(query ? `/?${query}` : '/');
+    });
 
     app.post("/adding_employee_shift",(req,res)=>{
         const shift_personel = req.body;
