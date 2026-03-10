@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // Parses JSON data
 
 app.use(session({
-    secret: 'supersecretkey', // in production, this needs to be kept long and in env variable
+    secret: 'supersecretkey', 
     resave: false,
     saveUninitialized: false
   }));

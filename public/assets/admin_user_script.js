@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     add_user.addEventListener("click",(event)=>{
         event.preventDefault();
         document.querySelector("#add_form").reset();
+        document.querySelector("#invite_link_container").classList.add("hidden_task");
         document.querySelector("#user_details").classList.add("hidden_task");
+        document.querySelector("#change_password_container").classList.add("hidden_task");
         document.querySelector("#adduser_form_container").classList.remove("hidden_task");
     })
 
@@ -27,37 +29,38 @@ document.addEventListener('DOMContentLoaded',()=>{
         const email = add_form.querySelector("#email").value;
         const netid = add_form.querySelector("#netid").value;
         const role = add_form.querySelector("#role").value;
-        const password = add_form.querySelector("#password").value;
 
-        const user_object ={
-            first_name:first_name,
-            last_name:last_name,
-            email:email,
-            netid:netid,
-            role:role,
-            password:password
-        }
+        const user_object = { first_name, last_name, email, netid, role };
+
         try{
-            const response = await fetch(add_form.action, {
-                method : add_form.method,
-                headers : {
-                    "Content-Type": "application/json"
-                },
+            const response = await fetch('/user/invite', {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(user_object)
             });
 
-            if (!response.ok) throw new Error("Failed to send data");
+            if (!response.ok) throw new Error("Failed to generate invite");
 
-            await response.json();
-            if (window.showToast) window.showToast("User added successfully!", "success");
-            document.querySelector("#user_details").classList.remove("hidden_task");
-            document.querySelector("#adduser_form_container").classList.add("hidden_task");
-            document.querySelector("#add_form").reset();
+            const data = await response.json();
+            if (!data.success) throw new Error(data.error);
+
+            // Show the invite link
+            const link_box = document.querySelector("#invite_link_box");
+            link_box.textContent = data.link;
+            document.querySelector("#invite_link_container").classList.remove("hidden_task");
+            if (window.showToast) window.showToast("Invite link generated!", "success");
         }catch (error){
-            console.error("❌ Error adding user:", error);
-            if (window.showToast) window.showToast("Failed to add user. Try again.", "error");
+            console.error("❌ Error generating invite:", error);
+            if (window.showToast) window.showToast("Failed to generate invite. Try again.", "error");
         }
     })
+
+    document.querySelector("#copy_invite_link").addEventListener('click', () => {
+        const link = document.querySelector("#invite_link_box").textContent;
+        navigator.clipboard.writeText(link).then(() => {
+            if (window.showToast) window.showToast("Link copied to clipboard!", "success");
+        });
+    });
 
     const show_all_users = document.querySelector("#show_all_users");
 
@@ -66,6 +69,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
         document.querySelector("#user_details").classList.add("hidden_task");
         document.querySelector("#adduser_form_container").classList.add("hidden_task");
+        document.querySelector("#change_password_container").classList.add("hidden_task");
         document.querySelector("#users_display_container").classList.remove("hidden_task");
     })
 
@@ -141,10 +145,8 @@ document.addEventListener('DOMContentLoaded',()=>{
                     search_input.value = user.first_name;
 
                     result_box.innerHTML = "";
-                    // redirect to that user's page
-                    // console.log(user);
                     window.location.href = `/user/${user.email}`;
-                    
+
                 })
                 result_box.appendChild(li);
 
@@ -155,12 +157,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
 
     function debounce(fn, delay) {
-        let timer; // stores timeout reference
-        
+        let timer;
         return (...args) => {
-            clearTimeout(timer); // cancel any existing timer
-            timer = setTimeout(() => fn(...args), delay); 
-            // start a new timer that calls fn after `delay`
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
         };
     }
 
@@ -176,4 +176,47 @@ document.addEventListener('DOMContentLoaded',()=>{
             document.querySelector("#users_info_table").classList.remove("hidden_task");
         }
     },300));
+
+    // Change Password
+    document.querySelector("#change_password_btn").addEventListener("click", () => {
+        document.querySelector("#change_password_form").reset();
+        document.querySelector("#user_details").classList.add("hidden_task");
+        document.querySelector("#adduser_form_container").classList.add("hidden_task");
+        document.querySelector("#users_display_container").classList.add("hidden_task");
+        document.querySelector("#change_password_container").classList.remove("hidden_task");
+    });
+
+    document.querySelector("#cancel_change_password").addEventListener("click", () => {
+        document.querySelector("#change_password_container").classList.add("hidden_task");
+        document.querySelector("#user_details").classList.remove("hidden_task");
+    });
+
+    document.querySelector("#change_password_form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const current_password = document.querySelector("#current_password").value;
+        const new_password = document.querySelector("#new_password").value;
+        const confirm_password = document.querySelector("#confirm_password").value;
+
+        try {
+            const res = await fetch("/user/change_password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ current_password, new_password, confirm_password })
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                if (window.showToast) window.showToast(data.error, "error");
+                return;
+            }
+
+            if (window.showToast) window.showToast("Password updated successfully!", "success");
+            document.querySelector("#change_password_container").classList.add("hidden_task");
+            document.querySelector("#user_details").classList.remove("hidden_task");
+            document.querySelector("#change_password_form").reset();
+        } catch (err) {
+            console.error("❌ Error changing password:", err);
+            if (window.showToast) window.showToast("Failed to update password. Try again.", "error");
+        }
+    });
 })

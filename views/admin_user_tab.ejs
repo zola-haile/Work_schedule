@@ -35,46 +35,69 @@
                 <%}else {%>
                     <p><strong>Role</strong> Career Assistant</p>
                 <%}%>
+                <button type="button" id="change_password_btn">Change Password</button>
             </div>
 
             <div class="hidden_task" id="adduser_form_container">
-                <form action="/user/add_role" method="POST" class="" id="add_form">
+                <form action="/user/invite" method="POST" class="" id="add_form">
                     <label for="first_name">New user's first name: </label>
-                    <input type="text" name="first_name" id="first_name">
-    
+                    <input type="text" name="first_name" id="first_name" required>
+
                     <br>
-    
+
                     <label for="last_name">New user's last name: </label>
-                    <input type="text" name="last_name" id="last_name">
-    
+                    <input type="text" name="last_name" id="last_name" required>
+
                     <br>
-    
+
                     <label for="email">New user's email: </label>
-                    <input type="email" name="email" id="email">
-    
+                    <input type="email" name="email" id="email" required>
+
                     <br>
-    
+
                     <label for="netid">New user's netid: </label>
-                    <input type="text" name="netid" id="netid">
-    
+                    <input type="text" name="netid" id="netid" required>
+
                     <br>
-    
+
                     <label for="role">Choose new user's role: </label>
                     <select name="role" id="role">
-                        <option value="admin">Administer</option>
+                        <option value="admin">Administrator</option>
                         <option value="sub_admin">Career Advisor</option>
                         <option value="ca">Career Assistant</option>
                     </select>
-    
-                    <br>
-                    
-                    <label for="password">New user's password: </label>
-                    <input type="text" name="password" id="password">
 
                     <br>
-                    <button type="submit" id="submit_user">Add User</button>
+                    <button type="submit" id="submit_user">Generate Invite Link</button>
                     <button type="button" id="cancel_adding_user">Cancel</button>
-    
+
+                </form>
+
+                <div id="invite_link_container" class="hidden_task">
+                    <p>Share this link with the user:</p>
+                    <div id="invite_link_box"></div>
+                    <button type="button" id="copy_invite_link">Copy Link</button>
+                </div>
+            </div>
+
+            <div class="hidden_task" id="change_password_container">
+                <form id="change_password_form">
+                    <label for="current_password">Current password: </label>
+                    <input type="password" name="current_password" id="current_password" required>
+
+                    <br>
+
+                    <label for="new_password">New password: </label>
+                    <input type="password" name="new_password" id="new_password" required>
+
+                    <br>
+
+                    <label for="confirm_password">Confirm new password: </label>
+                    <input type="password" name="confirm_password" id="confirm_password" required>
+
+                    <br>
+                    <button type="submit" id="submit_change_password">Update Password</button>
+                    <button type="button" id="cancel_change_password">Cancel</button>
                 </form>
             </div>
 

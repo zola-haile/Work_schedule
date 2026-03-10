@@ -3,6 +3,7 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 //notes on bcrypt:
 
@@ -66,6 +67,16 @@ const advanced_shift = new mongoose.Schema({
   }
 })
 
+const invite_token_schema = new mongoose.Schema({
+  token: { type: String, required: true, unique: true },
+  email: String,
+  first_name: String,
+  last_name: String,
+  netid: String,
+  role: String,
+  created_at: { type: Date, default: Date.now, expires: 86400 } // expires after 24h
+})
+
 // Create a model
 const dayshifts = mongoose.model('shifts', shifts, 'dayshifts'); // Explicitly specify the collection name
 const shift_hours =mongoose.model('shift_hours', hours, 'Hours');
@@ -75,6 +86,8 @@ const task1_model= mongoose.model('task1_model',task1,'task1');
 const user_model = mongoose.model('user_model',user,'users');
 
 const advanced_shift_model = mongoose.model('advanced_shift_model',advanced_shift,'advanced_shift');
+
+const invite_model = mongoose.model('invite_model', invite_token_schema, 'invites');
 
 
 
@@ -640,6 +653,32 @@ const auth_user = async (email,password) =>{
 // auth_user("eke@nd.edu","dontsuckem");
 
 
+const create_invite = async (user_info) => {
+  const token = crypto.randomBytes(32).toString('hex');
+  await invite_model.create({
+    token,
+    email: user_info.email,
+    first_name: user_info.first_name,
+    last_name: user_info.last_name,
+    netid: user_info.netid,
+    role: user_info.role
+  });
+  return token;
+};
+
+const find_invite = async (token) => {
+  return await invite_model.findOne({ token });
+};
+
+const delete_invite = async (token) => {
+  return await invite_model.deleteOne({ token });
+};
+
+const change_password = async (email, new_password) => {
+  const hashed = await bcrypt.hash(new_password, 10);
+  return await user_model.updateOne({ email }, { $set: { password: hashed } });
+};
+
 // Export the model (optional, if needed in other files)
 module.exports = {
   fetchDayShifts,
@@ -660,5 +699,9 @@ module.exports = {
   remove_employee,
   fetch_adv_shifts_week,
   fetch_adv_shifts_month,
-  remove_user
+  remove_user,
+  create_invite,
+  find_invite,
+  delete_invite,
+  change_password
 };

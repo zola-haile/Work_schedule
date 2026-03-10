@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/style.css" type="text/css">
+    <title>Career Portal — Join</title>
+</head>
+<body id="main-body">
+    <div id="pseudo-body">
+        <div class="login_form_container">
+
+            <% if (error) { %>
+                <p style="color: var(--danger); margin-bottom: 1rem;"><%= error %></p>
+            <% } %>
+
+            <% if (invite) { %>
+                <p style="margin-bottom: 1.2rem;">
+                    Welcome, <strong><%= invite.first_name %> <%= invite.last_name %></strong>!<br>
+                    Set a password to activate your account.
+                </p>
+
+                <form action="/join" method="POST">
+                    <input type="hidden" name="token" value="<%= token %>">
+
+                    <label for="join_password">Password</label>
+                    <input type="password" name="password" id="join_password" placeholder="••••••••" required>
+
+                    <label for="join_confirm">Confirm Password</label>
+                    <input type="password" name="confirm_password" id="join_confirm" placeholder="••••••••" required>
+
+                    <button type="submit" id="login_button">Create Account</button>
+                </form>
+            <% } %>
+
+        </div>
+    </div>
+</body>
+</html>

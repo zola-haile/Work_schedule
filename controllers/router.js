@@ -135,6 +135,55 @@ module.exports = (app)=>{
         res.redirect('/login');
     });
 
+    // Generate invite link — admin only
+    app.post('/user/invite', async (req, res) => {
+        const user_info = req.body;
+        try {
+            const token = await shifts.create_invite(user_info);
+            const link = `${req.protocol}://${req.get('host')}/join?token=${token}`;
+            res.json({ success: true, link });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ success: false, error: "Failed to generate invite" });
+        }
+    });
+
+    // Join page — user sets their password from invite link
+    app.get('/join', async (req, res) => {
+        const { token } = req.query;
+        if (!token) return res.redirect('/login');
+        const invite = await shifts.find_invite(token);
+        if (!invite) return res.render('join', { error: "This invite link is invalid or has expired.", invite: null, token: null });
+        res.render('join', { invite, token, error: null });
+    });
+
+    app.post('/join', async (req, res) => {
+        const { token, password, confirm_password } = req.body;
+        if (password !== confirm_password) {
+            const invite = await shifts.find_invite(token);
+            return res.render('join', { invite, token, error: "Passwords do not match." });
+        }
+        const invite = await shifts.find_invite(token);
+        if (!invite) return res.render('join', { error: "Invite link is invalid or has expired.", invite: null, token: null });
+
+        await shifts.add_user({ ...invite.toObject(), password });
+        await shifts.delete_invite(token);
+        res.redirect('/login');
+    });
+
+    // Change password — any logged-in user
+    app.post('/user/change_password', async (req, res) => {
+        const { current_password, new_password, confirm_password } = req.body;
+        if (!req.session.user) return res.status(401).json({ success: false, error: "Not logged in" });
+        if (new_password !== confirm_password) return res.json({ success: false, error: "New passwords do not match" });
+
+        const authenticated = await shifts.auth_user(req.session.user.email, current_password);
+        if (!authenticated) return res.json({ success: false, error: "Current password is incorrect" });
+
+        await shifts.change_password(req.session.user.email, new_password);
+        res.json({ success: true });
+    });
+
     app.post('/user/remove', async (req, res) => {
         const { email } = req.body;
         try {
